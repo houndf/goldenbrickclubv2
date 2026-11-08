@@ -145,7 +145,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                   </div>
                   <div className={ui.field} style={{ flex: "1 1 200px" }}>
                     <label className={ui.label} htmlFor={`locks-${round.id}`}>
-                      Picks lock (Eastern), usually first kickoff
+                      Round start (Eastern), used when a matchup has no kickoff
                     </label>
                     <input
                       id={`locks-${round.id}`}
@@ -161,7 +161,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                 </form>
                 {round.locksAt && (
                   <p className={ui.lead} style={{ fontSize: 13 }}>
-                    Locks {formatEastern(round.locksAt)} ET
+                    Round starts {formatEastern(round.locksAt)} ET · each matchup locks 1 hour before its kickoff
                   </p>
                 )}
 
@@ -242,6 +242,12 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                           </label>
                           <input id={`sb-${round.id}`} name="seedB" type="number" min={1} max={20} className={ui.input} />
                         </div>
+                      </div>
+                      <div className={ui.field}>
+                        <label className={ui.label} htmlFor={`ko-${round.id}`}>
+                          First kickoff (Eastern) · picks lock 1 hour before
+                        </label>
+                        <input id={`ko-${round.id}`} name="kickoff" type="datetime-local" className={ui.input} />
                       </div>
                       <div className={ui.field}>
                         <label className={ui.label} htmlFor={`lbl-${round.id}`}>

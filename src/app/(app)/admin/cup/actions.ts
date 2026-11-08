@@ -106,6 +106,7 @@ export async function addTieAction(form: FormData): Promise<void> {
     team_b_id: teamB,
     seed_a: num(form.get("seedA")),
     seed_b: num(form.get("seedB")),
+    first_kickoff: form.get("kickoff") ? easternLocalToIso(String(form.get("kickoff"))) : null,
   });
   refresh();
 }

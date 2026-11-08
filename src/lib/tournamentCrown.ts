@@ -42,6 +42,7 @@ export async function crownOracle(supabase: SupabaseClient, tournamentId: number
     seedB: null,
     winner: t.winner,
     totalGoals: t.total_goals,
+    kickoff: null,
   }));
   const tPicks: TPick[] = (picks ?? []).map((p) => ({
     tieId: p.tie_id,

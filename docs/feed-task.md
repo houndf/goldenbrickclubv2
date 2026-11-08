@@ -42,7 +42,10 @@ Other teams' regular-season matches are not tracked.
     Finals, MLS Cup. Add a round's `ties` as soon as its matchups are known.
   - Each tie: `teamA` = higher seed / home team, `teamB` = the other; seeds;
     label `EAST`/`WEST` (none for the final); `firstKickoff` = kickoff of the
-    first game of that matchup (the round locks at its earliest one).
+    first game of that matchup. Each matchup's picks lock **1 hour before** its
+    `firstKickoff`, so fill it in as soon as the date and time are announced —
+    a matchup without one can't be picked yet. Keep the seeds right: the app
+    draws the bracket from them (Round One order 1v8/9, 4v5, 2v7, 3v6).
   - `winner` = `a` or `b` once the team **advanced** (best-of-3 series, extra time
     and shootouts all count — record who goes through).
   - Final only: `totalGoals` = goals in the final including extra time,

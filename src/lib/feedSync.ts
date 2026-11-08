@@ -246,6 +246,7 @@ async function syncTournaments(db: Db, teamId: Map<string, number>, notes: strin
           seed_b: tie.seedB,
           winner: tie.winner === "a" ? "home" : tie.winner === "b" ? "away" : null,
           total_goals: tie.totalGoals,
+          first_kickoff: tie.firstKickoff,
         };
         const id = byKey.get(tie.key);
         if (id === undefined) {

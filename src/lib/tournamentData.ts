@@ -76,6 +76,7 @@ interface TieRow {
   seed_b: number | null;
   winner: "home" | "away" | null;
   total_goals: number | null;
+  first_kickoff: string | null;
   team_a: { code: string; name: string } | null;
   team_b: { code: string; name: string } | null;
 }
@@ -113,7 +114,7 @@ export async function getTournamentDetail(id: number): Promise<TournamentDetail 
   const { data: tieRows } = await supabase
     .from("tournament_ties")
     .select(
-      "id, round_id, slot, label, seed_a, seed_b, winner, total_goals, team_a:teams!tournament_ties_team_a_id_fkey(code, name), team_b:teams!tournament_ties_team_b_id_fkey(code, name)",
+      "id, round_id, slot, label, seed_a, seed_b, winner, total_goals, first_kickoff, team_a:teams!tournament_ties_team_a_id_fkey(code, name), team_b:teams!tournament_ties_team_b_id_fkey(code, name)",
     )
     .in("round_id", roundIds)
     .order("slot");
@@ -128,6 +129,7 @@ export async function getTournamentDetail(id: number): Promise<TournamentDetail 
     seedB: t.seed_b,
     winner: t.winner,
     totalGoals: t.total_goals,
+    kickoff: t.first_kickoff,
   }));
 
   const tieIds = ties.map((t) => t.id);

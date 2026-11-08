@@ -1,0 +1,676 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nextButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 14px 6px 6px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: var(--drop-sm);
+  font-family: var(--font-display);
+  font-size: 17px;
+  cursor: pointer;
+  animation: nudge 2.4s ease-in-out infinite;
+}
+
+.nextButton:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.nextCount {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--gold);
+}
+
+.allSet {
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--good);
+}
+
+.zoomButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.zoomButtons button,
+.stepper > button:not(.stepLabel) {
+  width: 44px;
+  height: 44px;
+  border: var(--outline);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: var(--drop-sm);
+  cursor: pointer;
+}
+
+.zoomButtons button:disabled {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.stepLabel {
+  border: 2px dashed var(--line);
+  border-radius: 12px;
+  background: var(--panel-sunken);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.stepRound {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.stepTeams {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+  text-align: center;
+}
+
+.viewport {
+  position: relative;
+  overflow: auto;
+  max-height: min(62vh, 520px);
+  border: var(--outline);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 0) 0 0 / 18px 18px,
+    var(--panel-sunken);
+  touch-action: manipulation;
+  overscroll-behavior: contain;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: zoom-in;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.colHead {
+  position: absolute;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.colName {
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.colPts {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.line,
+.lineDone {
+  fill: none;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.line {
+  stroke: var(--line);
+}
+
+.lineDone {
+  stroke: var(--gold);
+}
+
+.card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border: var(--outline);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  box-shadow: var(--drop-sm);
+}
+
+.cardButton {
+  cursor: pointer;
+}
+
+.cardButton:focus-visible {
+  outline: 4px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.cardEmpty {
+  border: 3px dashed var(--line);
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+}
+
+.cardTbd {
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.cardPick {
+  background: var(--gold);
+  color: var(--ink);
+  animation: glow 1.6s ease-in-out infinite;
+}
+
+.cardPicked {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--teal) 22%, var(--panel));
+}
+
+.cardLocked {
+  background: var(--panel-sunken);
+}
+
+.cardDone {
+  background: var(--panel);
+}
+
+.cardFocus {
+  outline: 4px solid var(--cream);
+  outline-offset: 4px;
+}
+
+.team {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.seed {
+  width: 14px;
+  font-size: 11px;
+  font-weight: 900;
+  opacity: 0.7;
+  text-align: right;
+}
+
+.code {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.teamMine {
+  background: var(--teal);
+  color: var(--ink);
+}
+
+.cardPick .teamMine,
+.cardDone .teamMine {
+  background: var(--ink);
+  color: var(--gold);
+}
+
+.teamWon .code::after {
+  content: " ›";
+  color: var(--gold);
+}
+
+.teamLost {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+.myDot {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  right: -10px;
+  min-width: 30px;
+  height: 26px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.badgePick {
+  background: var(--red);
+  color: var(--cream);
+  animation: bounce 1.6s ease-in-out infinite;
+}
+
+.badgeOk {
+  background: var(--teal);
+  color: var(--ink);
+}
+
+.badgeLock {
+  background: var(--panel);
+  font-size: 12px;
+}
+
+.badgeMiss {
+  background: var(--bad);
+  color: var(--cream);
+}
+
+/* Pick sheet */
+
+.sheet {
+  width: 100%;
+  max-width: 520px;
+  margin: auto auto 0;
+  padding: 0;
+  border: var(--outline);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--bg);
+  color: var(--text);
+  animation: rise 220ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.sheet::backdrop {
+  background: rgb(11 8 16 / 0.6);
+}
+
+.sheetInner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
+}
+
+.grabber {
+  align-self: center;
+  width: 44px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--line);
+}
+
+.sheetHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.sheetKicker {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.sheetPts {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: var(--outline);
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  box-shadow: var(--drop-sm);
+  transform: rotate(8deg);
+}
+
+.sheetLock {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.sheetLock strong {
+  color: var(--text);
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 120px;
+  padding: 14px 8px 12px;
+  border: var(--outline);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  box-shadow: var(--drop-md);
+  cursor: pointer;
+  transition: transform 120ms;
+}
+
+.choice:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: var(--drop-sm);
+}
+
+.choice:disabled {
+  cursor: default;
+}
+
+.choice:focus-visible {
+  outline: 4px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.choiceOn {
+  background: var(--gold);
+  color: var(--ink);
+  transform: rotate(-1.5deg);
+}
+
+.choiceWon {
+  border-color: var(--teal);
+}
+
+.choiceSeed {
+  font-size: 12px;
+  font-weight: 900;
+  opacity: 0.7;
+}
+
+.choiceCode {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1;
+}
+
+.choiceName {
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.choiceMark {
+  position: absolute;
+  top: -12px;
+  padding: 2px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--red);
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 12px;
+}
+
+.crowd {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.crowdDot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.goalsBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-md);
+}
+
+.goalsLabel {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.goalsRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.goalsRow button {
+  width: 48px;
+  height: 48px;
+  border: var(--outline);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 26px;
+  box-shadow: var(--drop-sm);
+}
+
+.goalsRow output {
+  min-width: 48px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 40px;
+}
+
+.savedBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: var(--outline);
+  border-radius: var(--radius-md);
+  background: var(--teal);
+  color: var(--ink);
+  font-weight: 800;
+  animation: pop 260ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.savedTick {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--teal);
+  font-size: 22px;
+}
+
+.error {
+  margin: 0;
+  font-weight: 800;
+  color: var(--bad);
+}
+
+.sheetActions {
+  display: flex;
+  gap: 10px;
+}
+
+.primary,
+.secondary {
+  flex: 1;
+  min-height: 52px;
+  border: var(--outline);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 19px;
+  box-shadow: var(--drop-sm);
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.secondary {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.primary:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: default;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: var(--drop-sm), 0 0 0 0 color-mix(in srgb, var(--gold) 70%, transparent);
+  }
+  50% {
+    box-shadow: var(--drop-sm), 0 0 0 10px color-mix(in srgb, var(--gold) 0%, transparent);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(6deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-4deg);
+  }
+}
+
+@keyframes nudge {
+  0%,
+  80%,
+  100% {
+    transform: translateX(0);
+  }
+  88% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardPick,
+  .badgePick,
+  .nextButton,
+  .sheet,
+  .savedBox {
+    animation: none;
+  }
+}

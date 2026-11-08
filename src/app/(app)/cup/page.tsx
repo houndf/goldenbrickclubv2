@@ -1,31 +1,28 @@
-import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
 import { HiddenResultsBanner, HiddenResultsCard } from "@/components/HiddenResults";
 import { requirePlayer } from "@/lib/player";
+import { timeUntil } from "@/lib/time";
 import { getLeagueSettings } from "@/lib/settings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { formatEastern, timeUntil } from "@/lib/time";
-import { roundState, tournamentStandings, type RoundState, type Side } from "@/lib/tournament";
+import { buildBracket, type Conference } from "@/lib/bracket";
+import { tieLockAt, tieState, tournamentStandings, type TTeam } from "@/lib/tournament";
 import { getLiveTournament, getOracleWins, getTournamentDetail, getTournaments } from "@/lib/tournamentData";
 import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
 import styles from "./cup.module.css";
-import { RoundPickForm } from "./RoundPickForm";
+import { BracketView, type CrowdPerson, type MyPick } from "./BracketView";
 
 export const instant = false;
 export const metadata = { title: "Cup · Golden Brick Club" };
 
-const stateLabel: Record<RoundState, string> = { setup: "SOON", open: "PICK NOW", locked: "LOCKED", done: "DONE" };
-
-export default async function CupPage({ searchParams }: PageProps<"/cup">) {
+export default async function CupPage() {
   const player = await requirePlayer();
-  const [goldOnly, settings, live, all, oracles, params] = await Promise.all([
+  const [goldOnly, settings, live, all, oracles] = await Promise.all([
     isGoldView(player),
     getLeagueSettings(),
     getLiveTournament(),
     getTournaments(),
     getOracleWins(),
-    searchParams,
   ]);
   const isAdmin = player.role === "admin";
   const hideResults = settings.resultsHidden && !isAdmin;
@@ -36,6 +33,21 @@ export default async function CupPage({ searchParams }: PageProps<"/cup">) {
   const people = new Map((profiles ?? []).map((p) => [p.id, p]));
 
   const detail = live ? await getTournamentDetail(live.id) : null;
+
+  // Top seeds, so the not-yet-set 1-seed games can show who's waiting.
+  const topSeeds: Partial<Record<Conference, TTeam>> = {};
+  if (detail) {
+    const { data: tops } = await supabase
+      .from("team_standings")
+      .select("conference, season_id, team:teams(code, name)")
+      .eq("rank", 1)
+      .order("season_id", { ascending: false })
+      .limit(2);
+    for (const row of (tops ?? []) as unknown as { conference: string; team: TTeam | null }[]) {
+      const conf = row.conference.toUpperCase() as Conference;
+      if (row.team && !topSeeds[conf]) topSeeds[conf] = row.team;
+    }
+  }
 
   return (
     <main className={ui.screen}>
@@ -52,7 +64,7 @@ export default async function CupPage({ searchParams }: PageProps<"/cup">) {
         <TournamentView
           detail={detail}
           playerId={player.id}
-          selectedRound={Number(params.round) || null}
+          topSeeds={topSeeds}
           people={people}
           goldOnly={goldOnly}
           hideResults={hideResults}
@@ -95,7 +107,7 @@ type Person = { id: string; username: string; initials: string; avatar_color: st
 function TournamentView({
   detail,
   playerId,
-  selectedRound,
+  topSeeds,
   people,
   goldOnly,
   hideResults,
@@ -104,7 +116,7 @@ function TournamentView({
 }: {
   detail: NonNullable<Awaited<ReturnType<typeof getTournamentDetail>>>;
   playerId: string;
-  selectedRound: number | null;
+  topSeeds: Partial<Record<Conference, TTeam>>;
   people: Map<string, Person>;
   goldOnly: boolean;
   hideResults: boolean;
@@ -113,57 +125,53 @@ function TournamentView({
 }) {
   const { meta, rounds, ties, picks } = detail;
   const now = new Date();
-  const states = new Map(rounds.map((r) => [r.id, roundState(r, ties, now)]));
-  const fallback =
-    rounds.find((r) => states.get(r.id) === "open") ??
-    [...rounds].reverse().find((r) => states.get(r.id) !== "setup") ??
-    rounds[0];
-  const round = rounds.find((r) => r.number === selectedRound) ?? fallback;
+  const roundOf = new Map(rounds.map((r) => [r.id, r]));
 
   const playerIds = [...people.values()].filter((p) => !goldOnly || p.extra_gold).map((p) => p.id);
+  const visible = new Set(playerIds);
   const standings = tournamentStandings(rounds, ties, picks, playerIds, (id) => people.get(id)?.username ?? id);
   const leader = standings[0];
   const anyScored = ties.some((t) => t.winner);
   const me = standings.find((s) => s.playerId === playerId);
 
-  const roundTies = round ? ties.filter((t) => t.roundId === round.id) : [];
-  const myPicks: Record<number, Side> = {};
-  let myGoals: number | null = null;
+  const myPicks: Record<number, MyPick> = {};
+  const crowd: Record<number, { home: CrowdPerson[]; away: CrowdPerson[] }> = {};
+  const tieById = new Map(ties.map((t) => [t.id, t]));
   for (const p of picks) {
-    if (p.playerId !== playerId) continue;
-    myPicks[p.tieId] = p.pick;
-    if (round?.isFinal && roundTies.some((t) => t.id === p.tieId)) myGoals = p.totalGoals;
+    if (p.playerId === playerId) myPicks[p.tieId] = { pick: p.pick, totalGoals: p.totalGoals };
+    const tie = tieById.get(p.tieId);
+    const round = tie ? roundOf.get(tie.roundId) : undefined;
+    const person = people.get(p.playerId);
+    // Everyone's picks show once a matchup locks.
+    if (!tie || !round || !person || !visible.has(p.playerId) || tieState(tie, round, now) === "open") continue;
+    const entry = (crowd[p.tieId] ??= { home: [], away: [] });
+    entry[p.pick].push({ id: person.id, username: person.username, initials: person.initials, color: person.avatar_color });
   }
-  const state = round ? states.get(round.id)! : "setup";
+
+  // Soonest lock among matchups still waiting on my pick.
+  const nextLock = ties
+    .filter((t) => !myPicks[t.id] && roundOf.has(t.roundId) && tieState(t, roundOf.get(t.roundId)!, now) === "open")
+    .map((t) => tieLockAt(t, roundOf.get(t.roundId)!)!)
+    .sort()[0];
+
+  const layout = buildBracket(rounds, ties, { topSeeds });
 
   return (
     <>
       <section className={styles.hero}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <span className={styles.heroKicker}>LIVE NOW</span>
-          {round?.locksAt && state === "open" && (
+          {nextLock && (
             <span style={{ background: "var(--ink)", color: "var(--gold)", borderRadius: 8, padding: "2px 8px", fontSize: 11, fontWeight: 900 }}>
-              LOCKS IN {timeUntil(round.locksAt, now).toUpperCase()}
+              NEXT LOCK IN {timeUntil(nextLock, now).toUpperCase()}
             </span>
           )}
         </div>
         <h2 className={styles.heroTitle}>{meta.name.toUpperCase()}</h2>
-        <nav className={styles.rounds} aria-label="Rounds">
-          {rounds.map((r) => {
-            const s = states.get(r.id)!;
-            const cls = [
-              styles.roundChip,
-              s === "done" ? styles.chipDone : s === "open" ? styles.chipOpen : "",
-              r.id === round?.id ? styles.chipSelected : "",
-            ].join(" ");
-            return (
-              <Link key={r.id} href={`/cup?round=${r.number}`} className={cls} aria-current={r.id === round?.id ? "page" : undefined}>
-                <span className={styles.roundChipName}>{r.name}</span>
-                <span className={styles.roundChipState}>{stateLabel[s]}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "var(--red-soft-text)" }}>
+          Pick who goes through each matchup. Right picks earn the round&apos;s number in points. Each matchup locks 1 hour before
+          kickoff.
+        </p>
         {me && !hideResults && (
           <span style={{ fontSize: 13, fontWeight: 900, color: "var(--red-soft-text)" }}>
             You: #{me.rank} · {me.points} pts{goldOnly ? " among gold members" : ""}
@@ -171,62 +179,9 @@ function TournamentView({
         )}
       </section>
 
-      {round && (
-        <section className={ui.panel} aria-labelledby="round-heading">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
-            <h2 id="round-heading" className={ui.sectionTitle}>
-              {round.name}
-            </h2>
-            <span className={ui.tag} style={{ background: "var(--teal)" }}>
-              +{round.points} EACH
-            </span>
-          </div>
-          {round.locksAt && (
-            <p className={ui.lead} style={{ fontSize: 13 }}>
-              {state === "open" ? "Picks lock" : "Locked"} {formatEastern(round.locksAt)} ET
-            </p>
-          )}
-
-          {state === "setup" && <p className={ui.lead}>Matchups for this round aren&apos;t set yet.</p>}
-
-          {state === "open" && (
-            <RoundPickForm
-              roundId={round.id}
-              points={round.points}
-              isFinal={round.isFinal}
-              ties={roundTies}
-              initialPicks={myPicks}
-              initialGoals={myGoals}
-            />
-          )}
-
-          {(state === "locked" || state === "done") && (
-            <ul className={ui.list}>
-              {roundTies.map((tie) => {
-                const mine = myPicks[tie.id];
-                const verdict = !mine ? "MISSED" : !tie.winner ? "WAITING" : tie.winner === mine ? `+${round.points}` : "0";
-                const vClass = !mine || (tie.winner && tie.winner !== mine) ? styles.wrong : !tie.winner ? styles.pending : styles.right;
-                return (
-                  <li key={tie.id} className={styles.resultRow}>
-                    <div>
-                      <div className={styles.resultTeams}>
-                        <span className={tie.winner === "home" ? styles.winnerMark : undefined}>{tie.teamA.code}</span>
-                        {" vs "}
-                        <span className={tie.winner === "away" ? styles.winnerMark : undefined}>{tie.teamB.code}</span>
-                      </div>
-                      <div className={ui.muted} style={{ fontSize: 12 }}>
-                        You picked {mine ? (mine === "home" ? tie.teamA.code : tie.teamB.code) : "nothing"}
-                        {tie.winner ? ` · ${tie.winner === "home" ? tie.teamA.code : tie.teamB.code} went through` : ""}
-                      </div>
-                    </div>
-                    <span className={`${styles.verdict} ${vClass}`}>{verdict}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
-      )}
+      <section className={ui.panel} aria-label="Bracket" style={{ padding: 12 }}>
+        <BracketView layout={layout} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
+      </section>
 
       {showAdminBanner && <HiddenResultsBanner />}
       {hideResults ? (
