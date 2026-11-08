@@ -199,11 +199,21 @@ function TournamentView({
           Pick who goes through each matchup. Right picks earn the round&apos;s number in points. Each matchup locks 1 hour before
           kickoff.
         </p>
-        {me && !hideResults && (
-          <span style={{ fontSize: "0.8125rem", fontWeight: 900, color: "var(--red-soft-text)" }}>
-            You: #{me.rank} · {me.points} pts{goldOnly ? " among gold members" : ""}
-          </span>
-        )}
+        <div className={styles.heroFoot}>
+          {me && !hideResults ? (
+            <span style={{ fontSize: "0.8125rem", fontWeight: 900, color: "var(--red-soft-text)" }}>
+              You: #{me.rank} · {me.points} pts{goldOnly ? " among gold members" : ""}
+            </span>
+          ) : (
+            <span />
+          )}
+          <a href="#bracket" className={styles.predictButton}>
+            PREDICT
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 5v14M6 13l6 6 6-6" />
+            </svg>
+          </a>
+        </div>
       </section>
 
       {showAdminBanner && <HiddenResultsBanner />}
@@ -277,7 +287,7 @@ function TournamentView({
         </details>
       )}
 
-      <section className={`${ui.panel} ${ui.span}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
+      <section id="bracket" className={`${ui.panel} ${ui.span} ${styles.bracketPanel}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
         <BracketView rounds={rounds} ties={ties} topSeeds={topSeeds} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
       </section>
 

@@ -133,6 +133,13 @@ a {
   color: var(--accent);
 }
 
+/* In-page jumps (like Cup → PREDICT) glide instead of snapping. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 button {
   font: inherit;
 }

@@ -370,3 +370,43 @@
   box-shadow: var(--drop-sm);
   cursor: pointer;
 }
+
+/* Banner's bottom row: your rank on the left, PREDICT on the right */
+.heroFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.predictButton {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.predictButton:hover {
+  background: var(--gold-hover);
+}
+
+.predictButton:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+/* Jumping to the bracket leaves a little breathing room above it */
+.bracketPanel {
+  scroll-margin-top: 0.75rem;
+}
