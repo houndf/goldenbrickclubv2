@@ -22,6 +22,9 @@ export default async function HomePage() {
   const mine = season?.standings.find((r) => r.profileId === player.id);
   const myTrophies = season?.segments.filter((s) => s.winner?.profileId === player.id).length ?? 0;
   const champLook = champ?.profileId ? season?.looks[champ.profileId] : undefined;
+  // Last place takes the Wooden Spoon (shown to Extra Gold members, like on the Table).
+  const spoon = player.extraGold && season && season.standings.length > 1 ? season.standings[season.standings.length - 1] : undefined;
+  const spoonLook = spoon?.profileId ? season?.looks[spoon.profileId] : undefined;
 
   return (
     <main className={ui.screen}>
@@ -47,11 +50,27 @@ export default async function HomePage() {
             <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4" />
           </svg>
           <span style={{ display: "flex", flexDirection: "column", flexGrow: 1, minWidth: 0 }}>
-            <span style={{ fontSize: "0.75rem", fontWeight: 900, letterSpacing: 1 }}>{goldOnly ? "2026 GOLD CHAMPION" : "2026 CHAMPION"}</span>
+            <span style={{ fontSize: "0.75rem", fontWeight: 900, letterSpacing: 1 }}>{goldOnly ? "2026 GNOMORE LOSSUS · GOLD" : "2026 GNOMORE LOSSUS"}</span>
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.625rem", lineHeight: 1.05, overflowWrap: "anywhere" }}>
               {champLook?.username ?? champ.name}
             </span>
             <span style={{ fontSize: "0.8125rem" }}>{champ.points} pts · see the final table ›</span>
+          </span>
+        </Link>
+      )}
+
+      {spoon && !hideResults && (
+        <Link href="/table" className={`${ui.panel} ${ui.woodCard}`}>
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="#E9C38F" stroke="#2A160A" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
+            <ellipse cx="9" cy="8" rx="4.6" ry="6" transform="rotate(-35 9 8)" />
+            <path d="M11.6 11.8l8.6 8.4a1.4 1.4 0 0 1-2 2l-8.4-8.6" />
+          </svg>
+          <span style={{ display: "flex", flexDirection: "column", flexGrow: 1, minWidth: 0 }}>
+            <span style={{ fontSize: "0.75rem", fontWeight: 900, letterSpacing: 1 }}>{goldOnly ? "2026 WOODEN SPOON · GOLD" : "2026 WOODEN SPOON"}</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.625rem", lineHeight: 1.05, overflowWrap: "anywhere" }}>
+              {spoonLook?.username ?? spoon.name}
+            </span>
+            <span style={{ fontSize: "0.8125rem" }}>{spoon.points} pts · bottom of the table ›</span>
           </span>
         </Link>
       )}

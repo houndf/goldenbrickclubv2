@@ -252,6 +252,33 @@
   transform: rotate(-3deg);
 }
 
+/* Wooden Spoon: a plank of brown wood with grain and a couple of knots. */
+.woodCard {
+  flex-direction: row;
+  align-items: center;
+  color: #fff4dc;
+  text-decoration: none;
+  transform: rotate(1deg);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.45);
+  background-color: #7a4a26;
+  background-image:
+    radial-gradient(ellipse 1.6rem 0.55rem at 78% 30%, #4a2a12 0 35%, #6a3e1e 36% 55%, transparent 56%),
+    radial-gradient(ellipse 1.1rem 0.4rem at 22% 78%, #4a2a12 0 35%, #6a3e1e 36% 55%, transparent 56%),
+    repeating-linear-gradient(
+      178deg,
+      rgb(0 0 0 / 0) 0 0.45rem,
+      rgb(40 18 6 / 0.28) 0.45rem 0.55rem,
+      rgb(0 0 0 / 0) 0.55rem 0.9rem,
+      rgb(255 214 160 / 0.1) 0.9rem 1rem
+    ),
+    repeating-linear-gradient(
+      182deg,
+      rgb(0 0 0 / 0) 0 1.3rem,
+      rgb(40 18 6 / 0.22) 1.3rem 1.4rem
+    ),
+    linear-gradient(180deg, #8d5a31, #6b3f1f 55%, #7f4d28);
+}
+
 /* Spans both columns on big screens (see below). */
 .span {
   min-width: 0;
