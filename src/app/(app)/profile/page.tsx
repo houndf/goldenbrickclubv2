@@ -20,13 +20,13 @@ export default async function ProfilePage() {
         <h1 className={ui.screenTitle}>YOUR PROFILE</h1>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <div className={ui.avatar} style={{ width: 72, height: 72, fontSize: 30, background: player.avatarColor }} aria-hidden="true">
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className={ui.avatar} style={{ width: "4.5rem", height: "4.5rem", fontSize: "1.875rem", background: player.avatarColor }} aria-hidden="true">
           {player.initials}
         </div>
         <div>
           <div className={ui.sectionTitle} style={{ overflowWrap: "anywhere" }}>{player.username}</div>
-          <div className={ui.muted} style={{ fontSize: 13 }}>
+          <div className={ui.muted} style={{ fontSize: "0.8125rem" }}>
             {player.role === "admin" ? "Commissioner" : "Player"}
             {player.extraGold ? " · Extra Gold ✨" : ""}
           </div>
@@ -42,7 +42,7 @@ export default async function ProfilePage() {
 
       <div className={ui.spacer} />
       <form action={logoutAction}>
-        <button type="submit" className={`${ui.button} ${ui.danger}`} style={{ fontSize: 20 }}>
+        <button type="submit" className={`${ui.button} ${ui.danger}`} style={{ fontSize: "1.25rem" }}>
           LOG OUT
         </button>
       </form>

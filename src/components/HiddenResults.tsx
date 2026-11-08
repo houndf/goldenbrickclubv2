@@ -4,7 +4,7 @@ import ui from "./ui.module.css";
 export function HiddenResultsCard() {
   return (
     <section className={ui.panel} style={{ alignItems: "center", textAlign: "center", padding: "28px 16px" }}>
-      <span style={{ fontSize: 44, lineHeight: 1 }} aria-hidden="true">
+      <span style={{ fontSize: "2.75rem", lineHeight: 1 }} aria-hidden="true">
         🤫
       </span>
       <h2 className={ui.sectionTitle}>Results are hidden</h2>

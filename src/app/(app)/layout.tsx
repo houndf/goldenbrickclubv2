@@ -12,12 +12,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const player = await requirePlayer();
   const [goldOnly, live, oracles] = await Promise.all([isGoldView(player), getLiveTournament(), getOracleWins()]);
   return (
-    <>
+    <div className={ui.shell}>
       <AppHeader player={player} goldOnly={goldOnly} oracle={oracles[player.id]?.length ?? 0} />
-      <div className={ui.appBody} style={{ paddingBottom: "calc(96px + env(safe-area-inset-bottom))" }}>
-        {children}
-      </div>
+      <div className={ui.appBody}>{children}</div>
       <BottomNav isAdmin={player.role === "admin"} showCup={Boolean(live)} />
-    </>
+    </div>
   );
 }

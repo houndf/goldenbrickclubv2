@@ -16,16 +16,16 @@ export function ResetPasswordButton({ playerId, username }: { playerId: string; 
           e.preventDefault();
         }
       }}
-      style={{ display: "flex", flexDirection: "column", gap: 8, flexBasis: "100%" }}
+      style={{ display: "flex", flexDirection: "column", gap: "0.5rem", flexBasis: "100%" }}
     >
       <input type="hidden" name="playerId" value={playerId} />
       <input type="hidden" name="username" value={username} />
       {state.password ? (
-        <div className={ui.notice} role="status" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className={ui.notice} role="status" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <span>
             Temporary password for {state.username}: <span className={ui.code}>{state.password}</span>
           </span>
-          <span style={{ fontSize: 13 }}>Shown once. Send it to them privately; they can change it in their profile.</span>
+          <span style={{ fontSize: "0.8125rem" }}>Shown once. Send it to them privately; they can change it in their profile.</span>
           <CopyButton text={state.password} label="COPY PASSWORD" />
         </div>
       ) : (

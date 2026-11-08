@@ -18,15 +18,17 @@ export function Avatar({
 }) {
   const darkBg = color.toLowerCase() === "#d7263d";
   const badge = Math.max(16, Math.round(size * 0.5));
+  // Sizes are given in reference pixels and drawn in rem, so avatars scale with the app.
+  const r = (px: number) => `${px / 16}rem`;
   return (
     <span style={{ position: "relative", display: "inline-flex", flexShrink: 0 }}>
       <span
         className={ui.avatar}
         aria-hidden="true"
         style={{
-          width: size,
-          height: size,
-          fontSize: Math.round(size * 0.38),
+          width: r(size),
+          height: r(size),
+          fontSize: r(Math.round(size * 0.38)),
           background: color,
           color: darkBg ? "var(--cream)" : "var(--ink)",
           borderWidth: size < 32 ? 2 : 3,
@@ -39,17 +41,17 @@ export function Avatar({
           title={oracle === 1 ? "Oracle trophy winner" : `${oracle}× Oracle trophy winner`}
           style={{
             position: "absolute",
-            right: -badge * 0.35,
-            bottom: -badge * 0.3,
-            width: badge,
-            height: badge,
+            right: r(-badge * 0.35),
+            bottom: r(-badge * 0.3),
+            width: r(badge),
+            height: r(badge),
             borderRadius: "50%",
             background: "var(--purple)",
             border: "2px solid var(--ink)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: badge * 0.6,
+            fontSize: r(badge * 0.6),
             lineHeight: 1,
           }}
         >

@@ -38,7 +38,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
       </div>
 
       {tournaments.length > 0 && (
-        <nav style={{ display: "flex", gap: 8, flexWrap: "wrap" }} aria-label="Tournaments">
+        <nav style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }} aria-label="Tournaments">
           {tournaments.map((x) => (
             <Link
               key={x.id}
@@ -67,10 +67,10 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
       {selected && detail && t !== "new" && (
         <>
           <section className={ui.panel}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
               <div style={{ flex: "1 1 220px" }}>
                 <h2 className={ui.sectionTitle}>{selected.name}</h2>
-                <p className={ui.lead} style={{ fontSize: 13 }}>
+                <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
                   Trophy: {selected.trophyName} ·{" "}
                   {selected.status === "live"
                     ? "Live: the Cup tab is showing for everyone."
@@ -122,7 +122,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
             const pickCount = (tieId: number) => detail.picks.filter((p) => p.tieId === tieId).length;
             return (
               <section key={round.id} className={ui.panel} aria-labelledby={`round-${round.id}`}>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.5rem", flexWrap: "wrap" }}>
                   <h2 id={`round-${round.id}`} className={ui.sectionTitle}>
                     {round.number}. {round.name}
                     {round.isFinal ? " (final)" : ""}
@@ -135,7 +135,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                   </span>
                 </div>
 
-                <form action={saveRoundAction} style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "flex-end" }}>
+                <form action={saveRoundAction} style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "flex-end" }}>
                   <input type="hidden" name="roundId" value={round.id} />
                   <div className={ui.field} style={{ flex: "1 1 160px" }}>
                     <label className={ui.label} htmlFor={`name-${round.id}`}>
@@ -160,7 +160,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                   </button>
                 </form>
                 {round.locksAt && (
-                  <p className={ui.lead} style={{ fontSize: 13 }}>
+                  <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
                     Round starts {formatEastern(round.locksAt)} ET · each matchup locks 1 hour before its kickoff
                   </p>
                 )}
@@ -169,13 +169,13 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                   {roundTies.map((tie) => (
                     <li key={tie.id} className={ui.row}>
                       <div className={ui.rowMain}>
-                        <span style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>
+                        <span style={{ fontFamily: "var(--font-display)", fontSize: "1.125rem" }}>
                           {tie.label ? `${tie.label} · ` : ""}
                           {tie.seedA != null ? `(${tie.seedA}) ` : ""}
                           {tie.teamA.code} vs {tie.seedB != null ? `(${tie.seedB}) ` : ""}
                           {tie.teamB.code}
                         </span>
-                        <span className={ui.muted} style={{ fontSize: 12 }}>
+                        <span className={ui.muted} style={{ fontSize: "0.75rem" }}>
                           {pickCount(tie.id)} picks
                           {tie.winner ? ` · ${tie.winner === "home" ? tie.teamA.code : tie.teamB.code} advanced` : " · no result yet"}
                         </span>
@@ -183,7 +183,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                       <form action={setTieResultAction} className={ui.rowActions} style={{ alignItems: "center" }}>
                         <input type="hidden" name="tieId" value={tie.id} />
                         {round.isFinal && (
-                          <label className={ui.check} style={{ fontSize: 13 }}>
+                          <label className={ui.check} style={{ fontSize: "0.8125rem" }}>
                             Total goals
                             <input
                               name="totalGoals"
@@ -192,7 +192,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                               max={30}
                               defaultValue={tie.totalGoals ?? ""}
                               className={ui.input}
-                              style={{ width: 72, minHeight: 44, height: 44 }}
+                              style={{ width: "4.5rem", minHeight: "2.75rem", height: "2.75rem" }}
                             />
                           </label>
                         )}
@@ -225,9 +225,9 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                     <summary className={ui.textLink} style={{ display: "inline-block" }}>
                       + Add a matchup
                     </summary>
-                    <form action={addTieAction} className={ui.form} style={{ marginTop: 10 }}>
+                    <form action={addTieAction} className={ui.form} style={{ marginTop: "0.625rem" }}>
                       <input type="hidden" name="roundId" value={round.id} />
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "0.5rem" }}>
                         <TeamSelect id={`a-${round.id}`} name="teamA" label="Team A (home / higher seed)" teams={teams ?? []} />
                         <TeamSelect id={`b-${round.id}`} name="teamB" label="Team B" teams={teams ?? []} />
                         <div className={ui.field}>
@@ -255,7 +255,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
                         </label>
                         <input id={`lbl-${round.id}`} name="label" className={ui.input} placeholder="EAST or WEST" maxLength={12} />
                       </div>
-                      <button type="submit" className={`${ui.button} ${ui.secondary}`} style={{ fontSize: 20 }}>
+                      <button type="submit" className={`${ui.button} ${ui.secondary}`} style={{ fontSize: "1.25rem" }}>
                         ADD MATCHUP
                       </button>
                     </form>

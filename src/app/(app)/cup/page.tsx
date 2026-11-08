@@ -51,7 +51,7 @@ export default async function CupPage() {
 
   return (
     <main className={ui.screen}>
-      <h1 className={ui.bigTitle} style={{ fontSize: 40 }}>
+      <h1 className={ui.bigTitle} style={{ fontSize: "2.5rem" }}>
         CUP
       </h1>
 
@@ -83,12 +83,12 @@ export default async function CupPage() {
               const winner = t.oracleProfileId ? people.get(t.oracleProfileId) : undefined;
               return (
                 <li key={t.id} className={ui.row}>
-                  <span style={{ fontSize: 28 }} aria-hidden="true">
+                  <span style={{ fontSize: "1.75rem" }} aria-hidden="true">
                     🔮
                   </span>
                   <div className={ui.rowMain}>
                     <span style={{ fontWeight: 900 }}>{t.trophyName}</span>
-                    <span className={ui.muted} style={{ fontSize: 13 }}>
+                    <span className={ui.muted} style={{ fontSize: "0.8125rem" }}>
                       {hideResults ? "Winner hidden" : (winner?.username ?? "No winner")}
                     </span>
                   </div>
@@ -156,28 +156,28 @@ function TournamentView({
 
   return (
     <>
-      <section className={styles.hero}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+      <section className={`${styles.hero} ${ui.span}`}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
           <span className={styles.heroKicker}>LIVE NOW</span>
           {nextLock && (
-            <span style={{ background: "var(--ink)", color: "var(--gold)", borderRadius: 8, padding: "2px 8px", fontSize: 11, fontWeight: 900 }}>
+            <span style={{ background: "var(--ink)", color: "var(--gold)", borderRadius: "0.5rem", padding: "2px 8px", fontSize: "0.6875rem", fontWeight: 900 }}>
               NEXT LOCK IN {timeUntil(nextLock, now).toUpperCase()}
             </span>
           )}
         </div>
         <h2 className={styles.heroTitle}>{meta.name.toUpperCase()}</h2>
-        <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "var(--red-soft-text)" }}>
+        <p style={{ margin: 0, fontSize: "0.8125rem", fontWeight: 800, color: "var(--red-soft-text)" }}>
           Pick who goes through each matchup. Right picks earn the round&apos;s number in points. Each matchup locks 1 hour before
           kickoff.
         </p>
         {me && !hideResults && (
-          <span style={{ fontSize: 13, fontWeight: 900, color: "var(--red-soft-text)" }}>
+          <span style={{ fontSize: "0.8125rem", fontWeight: 900, color: "var(--red-soft-text)" }}>
             You: #{me.rank} · {me.points} pts{goldOnly ? " among gold members" : ""}
           </span>
         )}
       </section>
 
-      <section className={ui.panel} aria-label="Bracket" style={{ padding: 12 }}>
+      <section className={`${ui.panel} ${ui.span}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
         <BracketView rounds={rounds} ties={ties} topSeeds={topSeeds} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
       </section>
 
@@ -190,12 +190,12 @@ function TournamentView({
             Oracle race {goldOnly ? "· gold only" : ""}
           </h2>
           {anyScored && leader ? (
-            <p className={ui.lead} style={{ fontSize: 14 }}>
+            <p className={ui.lead} style={{ fontSize: "0.875rem" }}>
               Current {meta.trophyName}: <strong style={{ color: "var(--text)" }}>{people.get(leader.playerId)?.username}</strong> ·{" "}
               {leader.points} pts
             </p>
           ) : (
-            <p className={ui.lead} style={{ fontSize: 14 }}>
+            <p className={ui.lead} style={{ fontSize: "0.875rem" }}>
               No results yet. Ties at the end go to the closest final-goals guess.
             </p>
           )}

@@ -21,7 +21,8 @@ export interface CrowdPerson {
 
 // Below this scale a tap zooms in instead of opening a matchup (vertical cards are smaller, so read sooner).
 const READABLE: Record<Orientation, number> = { horizontal: 0.75, vertical: 0.55 };
-const MAX_SCALE = 1.4;
+const MAX_SCALE = 2;
+const MAX_FIT = 1.3; // on big screens the whole bracket may draw a bit larger than its reference size
 
 export function BracketView({
   rounds,
@@ -44,6 +45,7 @@ export function BracketView({
   const layout = useMemo(() => buildBracket(rounds, ties, { topSeeds, orientation }), [rounds, ties, topSeeds, orientation]);
   const { cardW, cardH } = layout;
   const viewport = useRef<HTMLDivElement>(null);
+  const sized = useRef<HTMLDivElement>(null);
   const [now, setNow] = useState(() => new Date(nowIso));
   // Picks saved in this visit sit on top of what the server sent.
   const [savedHere, setPicks] = useState<Record<number, MyPick>>({});
@@ -77,7 +79,7 @@ export function BracketView({
     if (!el) return;
     let first = true;
     const measure = () => {
-      const f = Math.min(1, el.clientWidth / layout.width);
+      const f = Math.min(MAX_FIT, el.clientWidth / layout.width);
       setFit(f);
       if (first || scaleRef.current < f) {
         scaleRef.current = f;
@@ -100,7 +102,7 @@ export function BracketView({
     const el = viewport.current;
     if (!el) return;
     const from = scaleRef.current;
-    const to = Math.max(Math.min(target, MAX_SCALE), Math.min(1, el.clientWidth / layout.width));
+    const to = Math.max(Math.min(target, MAX_SCALE), Math.min(MAX_FIT, el.clientWidth / layout.width));
     const ax = vx ?? el.clientWidth / 2;
     const ay = vy ?? el.clientHeight / 2;
     const start = performance.now();
@@ -126,7 +128,9 @@ export function BracketView({
     const r = el.getBoundingClientRect();
     const vx = clientX - r.left;
     const vy = clientY - r.top;
-    return { cx: (el.scrollLeft + vx) / scaleRef.current, cy: (el.scrollTop + vy) / scaleRef.current, vx, vy };
+    // The bracket is centered when it's narrower than the box.
+    const offset = sized.current?.offsetLeft ?? 0;
+    return { cx: (el.scrollLeft + vx - offset) / scaleRef.current, cy: (el.scrollTop + vy) / scaleRef.current, vx, vy };
   };
 
   const readable = READABLE[orientation];
@@ -156,7 +160,7 @@ export function BracketView({
     if (prev && t - prev.t < 320 && Math.hypot(e.clientX - prev.x, e.clientY - prev.y) < 30) {
       // Double-tap: back out to the whole bracket, or in for a closer look if already there.
       if (scaleRef.current > fit + 0.01) zoomTo(fit, p.cx, p.cy, p.vx, p.vy);
-      else zoomTo(1.15, p.cx, p.cy, p.vx, p.vy);
+      else zoomTo(Math.max(1.15, fit * 1.5), p.cx, p.cy, p.vx, p.vy);
       lastTap.current = null;
     } else {
       lastTap.current = { t, x: e.clientX, y: e.clientY };
@@ -287,7 +291,7 @@ export function BracketView({
         role="region"
         aria-label="Tournament bracket"
       >
-        <div style={{ width: layout.width * scale, height: layout.height * scale, position: "relative" }}>
+        <div ref={sized} style={{ width: layout.width * scale, height: layout.height * scale, position: "relative", margin: "0 auto" }}>
           <div className={styles.canvas} style={{ width: layout.width, height: layout.height, transform: `scale(${scale})` }}>
             <svg className={styles.lines} width={layout.width} height={layout.height} aria-hidden="true">
               {layout.edges.map((e) => {

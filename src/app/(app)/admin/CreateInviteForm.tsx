@@ -50,7 +50,7 @@ export function CreateInviteForm({
         </p>
       )}
       {state.code && (
-        <div className={ui.notice} role="status" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className={ui.notice} role="status" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <span>
             Invite for {state.note ?? "your friend"}: <span className={ui.code}>{state.code}</span>
           </span>
@@ -58,7 +58,7 @@ export function CreateInviteForm({
         </div>
       )}
 
-      <button type="submit" className={`${ui.button} ${ui.primary}`} disabled={pending} style={{ fontSize: 22 }}>
+      <button type="submit" className={`${ui.button} ${ui.primary}`} disabled={pending} style={{ fontSize: "1.375rem" }}>
         {pending ? "MAKING…" : "MAKE INVITE CODE"}
       </button>
     </form>

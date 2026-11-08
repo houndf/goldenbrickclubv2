@@ -18,7 +18,7 @@ export default function LoginPage() {
           <br />
           BACK!
         </h1>
-        <p className={ui.lead} style={{ marginTop: 14 }}>
+        <p className={ui.lead} style={{ marginTop: "0.875rem" }}>
           Log in to make your pick before kickoff.
         </p>
       </div>

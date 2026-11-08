@@ -1,11 +1,11 @@
 .screen {
   min-height: 100dvh;
-  max-width: 480px;
+  max-width: 30rem;
   margin: 0 auto;
-  padding: max(28px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  padding: max(1.75rem, env(safe-area-inset-top)) 1.25rem max(1.5rem, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 1.125rem;
 }
 
 /* Brand */
@@ -13,14 +13,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 40px;
+  font-size: 2.5rem;
   line-height: 0.95;
   text-align: center;
 }
@@ -31,7 +31,7 @@
 
 .tagline {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--muted);
 }
 
@@ -40,7 +40,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 /* Atlanta United record */
@@ -49,11 +49,11 @@
   color: var(--cream);
   border: var(--outline);
   border-radius: var(--radius-lg);
-  box-shadow: 0 7px 0 var(--ink);
-  padding: 14px 16px;
+  box-shadow: 0 0.4375rem 0 var(--ink);
+  padding: 0.875rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   transform: rotate(-1deg);
 }
 
@@ -61,13 +61,13 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 1rem;
   letter-spacing: 2px;
   color: var(--red-soft-text);
 }
 
 .cardMeta {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 900;
   color: var(--red-soft-text);
 }
@@ -76,7 +76,7 @@
   margin: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .recordTile {
@@ -87,18 +87,18 @@
   color: var(--ink);
   border: var(--outline);
   border-radius: var(--radius-sm);
-  padding: 6px 0;
+  padding: 0.375rem 0;
 }
 
 .recordValue {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 36px;
+  font-size: 2.25rem;
   line-height: 1;
 }
 
 .recordLabel {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 900;
   letter-spacing: 1px;
 }
@@ -108,24 +108,24 @@
   background: var(--panel);
   border: var(--outline);
   border-radius: var(--radius-lg);
-  box-shadow: 0 7px 0 var(--ink);
-  padding: 14px 16px;
+  box-shadow: 0 0.4375rem 0 var(--ink);
+  padding: 0.875rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .panelLabel {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 1rem;
   letter-spacing: 2px;
   color: var(--accent);
 }
 
 .panelMeta {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 900;
   color: var(--muted);
 }
@@ -136,16 +136,16 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .leader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   border: 2px solid var(--ink);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
 }
 
 .leaderFirst {
@@ -154,14 +154,14 @@
 }
 
 .leaderRank {
-  width: 18px;
+  width: 1.125rem;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 1.375rem;
 }
 
 .avatar {
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   flex-shrink: 0;
   border-radius: 50%;
   border: 2px solid var(--ink);
@@ -172,12 +172,12 @@
   min-width: 0;
   overflow-wrap: anywhere;
   font-weight: 900;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .leaderPoints {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 1.25rem;
   white-space: nowrap;
 }
 
@@ -189,7 +189,7 @@
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .primaryButton {
@@ -199,11 +199,11 @@
   background: var(--gold);
   color: var(--ink);
   border: var(--outline);
-  border-radius: 20px;
-  box-shadow: 0 7px 0 var(--ink);
-  padding: 16px;
+  border-radius: 1.25rem;
+  box-shadow: 0 0.4375rem 0 var(--ink);
+  padding: 1rem;
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: 1.875rem;
   letter-spacing: 1px;
   transition: transform 80ms ease, box-shadow 80ms ease;
 }
@@ -213,17 +213,23 @@
 }
 
 .primaryButton:active {
-  transform: translateY(5px);
+  transform: translateY(0.3125rem);
   box-shadow: 0 2px 0 var(--ink);
 }
 
 .joinLine {
   margin: 0;
   text-align: center;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--muted);
 }
 
 .joinLine a {
   font-weight: 900;
+}
+
+@media (min-width: 640px) {
+  .screen {
+    max-width: 34rem;
+  }
 }

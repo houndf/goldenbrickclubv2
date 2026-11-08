@@ -64,12 +64,12 @@ export default async function AdminPage() {
       </div>
 
       <section className={ui.panel} aria-labelledby="results-switch">
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
           <div style={{ flex: "1 1 200px" }}>
             <h2 id="results-switch" className={ui.sectionTitle}>
               Hide results {settings.resultsHidden ? "🤫" : ""}
             </h2>
-            <p className={ui.lead} style={{ fontSize: 13 }}>
+            <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
               {settings.resultsHidden
                 ? "Players can't see standings, the top 3, the champion or their rank. Admins still can."
                 : "Hide standings, the top 3, the champion and ranks from players, just for fun."}
@@ -83,7 +83,7 @@ export default async function AdminPage() {
               aria-checked={settings.resultsHidden}
               aria-labelledby="results-switch"
               className={`${ui.button} ${ui.small} ${settings.resultsHidden ? ui.primary : ui.secondary}`}
-              style={{ minWidth: 110 }}
+              style={{ minWidth: "6.875rem" }}
             >
               {settings.resultsHidden ? "HIDDEN" : "SHOWING"}
             </button>
@@ -91,7 +91,7 @@ export default async function AdminPage() {
         </div>
       </section>
 
-      <Link href="/admin/cup" className={`${ui.button} ${ui.primary}`} style={{ fontSize: 22 }}>
+      <Link href="/admin/cup" className={`${ui.button} ${ui.primary}`} style={{ fontSize: "1.375rem" }}>
         TOURNAMENTS (CUPS) ›
       </Link>
 
@@ -117,7 +117,7 @@ export default async function AdminPage() {
                 <li key={invite.code} className={ui.row}>
                   <div className={ui.rowMain}>
                     <span className={ui.code}>{invite.code}</span>
-                    <span className={ui.muted} style={{ fontSize: 13 }}>
+                    <span className={ui.muted} style={{ fontSize: "0.8125rem" }}>
                       {invite.note ?? legacyName ?? "No note"}
                       {legacyName ? " · 2026 history" : ""} · made {shortDate(invite.created_at)}
                     </span>
@@ -160,7 +160,7 @@ export default async function AdminPage() {
                     {p.username}
                     {isMe ? " (you)" : ""}
                   </span>
-                  <span className={ui.muted} style={{ fontSize: 13 }}>
+                  <span className={ui.muted} style={{ fontSize: "0.8125rem" }}>
                     Joined {shortDate(p.created_at)}
                     {legacyName ? ` · 2026 as ${legacyName}` : ""}
                   </span>

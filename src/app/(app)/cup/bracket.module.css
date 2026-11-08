@@ -1,29 +1,29 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .nextButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 6px 14px 6px 6px;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.875rem 0.375rem 0.375rem;
   border: var(--outline);
   border-radius: 999px;
   background: var(--gold);
   color: var(--ink);
   box-shadow: var(--drop-sm);
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 1.0625rem;
   cursor: pointer;
   animation: nudge 2.4s ease-in-out infinite;
 }
@@ -36,8 +36,8 @@
 .nextCount {
   display: inline-grid;
   place-items: center;
-  min-width: 30px;
-  height: 30px;
+  min-width: 1.875rem;
+  height: 1.875rem;
   border-radius: 999px;
   background: var(--ink);
   color: var(--gold);
@@ -45,25 +45,25 @@
 
 .allSet {
   font-weight: 900;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--good);
 }
 
 .zoomButtons {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .zoomButtons button,
 .stepper > button:not(.stepLabel) {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: var(--outline);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   background: var(--panel);
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 1;
   box-shadow: var(--drop-sm);
   cursor: pointer;
@@ -76,33 +76,33 @@
 
 .stepper {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
-  gap: 8px;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  gap: 0.5rem;
   align-items: stretch;
 }
 
 .stepLabel {
   border: 2px dashed var(--line);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   background: var(--panel-sunken);
   color: var(--text);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 2px 8px;
+  min-height: 2.75rem;
+  padding: 2px 0.5rem;
   cursor: pointer;
 }
 
 .stepRound {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.1;
 }
 
 .stepTeams {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 900;
   color: var(--muted);
   letter-spacing: 0.5px;
@@ -110,7 +110,7 @@
 
 .hint {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--muted);
   text-align: center;
@@ -119,11 +119,11 @@
 .viewport {
   position: relative;
   overflow: auto;
-  max-height: min(62vh, 520px);
+  max-height: min(62vh, 32.5rem);
   border: var(--outline);
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 0) 0 0 / 18px 18px,
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 0) 0 0 / 1.125rem 1.125rem,
     var(--panel-sunken);
   touch-action: manipulation;
   overscroll-behavior: contain;
@@ -133,7 +133,7 @@
 }
 
 .viewportTall {
-  max-height: min(72vh, 760px);
+  max-height: min(72vh, 47.5rem);
 }
 
 .rotated {
@@ -363,7 +363,7 @@
 
 .sheet {
   width: 100%;
-  max-width: 520px;
+  max-width: 32.5rem;
   margin: auto auto 0;
   padding: 0;
   border: var(--outline);
@@ -381,15 +381,15 @@
 .sheetInner {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
+  gap: 0.875rem;
+  padding: 0.625rem 1.125rem calc(1.125rem + env(safe-area-inset-bottom));
 }
 
 .grabber {
   align-self: center;
-  width: 44px;
-  height: 5px;
-  border-radius: 99px;
+  width: 2.75rem;
+  height: 0.3125rem;
+  border-radius: 6.1875rem;
   background: var(--line);
 }
 
@@ -397,11 +397,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .sheetKicker {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 900;
   letter-spacing: 1.5px;
   color: var(--muted);
@@ -411,28 +411,28 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
 }
 
 .sheetPts {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   border: var(--outline);
   border-radius: 50%;
   background: var(--gold);
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 1.375rem;
   box-shadow: var(--drop-sm);
   transform: rotate(8deg);
 }
 
 .sheetLock {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--muted);
 }
 
@@ -443,7 +443,7 @@
 .choices {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .choice {
@@ -452,8 +452,8 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  min-height: 120px;
-  padding: 14px 8px 12px;
+  min-height: 7.5rem;
+  padding: 0.875rem 0.5rem 0.75rem;
   border: var(--outline);
   border-radius: var(--radius-md);
   background: var(--panel);
@@ -465,7 +465,7 @@
 }
 
 .choice:active:not(:disabled) {
-  transform: translateY(4px);
+  transform: translateY(0.25rem);
   box-shadow: var(--drop-sm);
 }
 
@@ -474,7 +474,7 @@
 }
 
 .choice:focus-visible {
-  outline: 4px solid var(--teal);
+  outline: 0.25rem solid var(--teal);
   outline-offset: 3px;
 }
 
@@ -489,19 +489,19 @@
 }
 
 .choiceSeed {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 900;
   opacity: 0.7;
 }
 
 .choiceCode {
   font-family: var(--font-display);
-  font-size: 40px;
+  font-size: 2.5rem;
   line-height: 1;
 }
 
 .choiceName {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 800;
   text-align: center;
 }
@@ -509,13 +509,13 @@
 .choiceMark {
   position: absolute;
   top: -12px;
-  padding: 2px 10px;
+  padding: 2px 0.625rem;
   border: 3px solid var(--ink);
   border-radius: 999px;
   background: var(--red);
   color: var(--cream);
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .crowd {
@@ -523,18 +523,18 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 3px;
-  margin-top: 6px;
+  margin-top: 0.375rem;
 }
 
 .crowdDot {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 2px solid var(--ink);
   border-radius: 50%;
   color: var(--ink);
-  font-size: 9px;
+  font-size: 0.5625rem;
   font-weight: 900;
 }
 
@@ -542,14 +542,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
+  gap: 0.5rem;
+  padding: 0.75rem;
   border: 2px dashed var(--line);
   border-radius: var(--radius-md);
 }
 
 .goalsLabel {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 900;
   color: var(--muted);
 }
@@ -557,33 +557,33 @@
 .goalsRow {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .goalsRow button {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border: var(--outline);
   border-radius: 50%;
   background: var(--panel);
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 1.625rem;
   box-shadow: var(--drop-sm);
 }
 
 .goalsRow output {
-  min-width: 48px;
+  min-width: 3rem;
   text-align: center;
   font-family: var(--font-display);
-  font-size: 40px;
+  font-size: 2.5rem;
 }
 
 .savedBox {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 0.75rem;
+  padding: 0.875rem;
   border: var(--outline);
   border-radius: var(--radius-md);
   background: var(--teal);
@@ -596,12 +596,12 @@
   display: grid;
   place-items: center;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   background: var(--ink);
   color: var(--teal);
-  font-size: 22px;
+  font-size: 1.375rem;
 }
 
 .error {
@@ -612,17 +612,17 @@
 
 .sheetActions {
   display: flex;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .primary,
 .secondary {
   flex: 1;
-  min-height: 52px;
+  min-height: 3.25rem;
   border: var(--outline);
   border-radius: var(--radius-sm);
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: 1.1875rem;
   box-shadow: var(--drop-sm);
   cursor: pointer;
 }
@@ -641,6 +641,16 @@
   opacity: 0.5;
   box-shadow: none;
   cursor: default;
+}
+
+/* Tablets and up: the pick panel is a centered pop-up, not a bottom sheet. */
+@media (min-width: 640px) {
+  .sheet {
+    margin: auto;
+    border-bottom: var(--outline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--drop-lg);
+  }
 }
 
 @keyframes glow {
@@ -670,7 +680,7 @@
     transform: translateX(0);
   }
   88% {
-    transform: translateX(4px);
+    transform: translateX(0.25rem);
   }
 }
 

@@ -2,27 +2,27 @@
 
 .screen {
   min-height: 100dvh;
-  max-width: 480px;
+  max-width: 30rem;
   margin: 0 auto;
-  padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  padding: max(1.25rem, env(safe-area-inset-top)) 1.25rem max(1.5rem, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .wide {
-  max-width: 760px;
+  max-width: 47.5rem;
 }
 
 .topBar {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 0.875rem;
 }
 
 .iconButton {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   flex-shrink: 0;
   border-radius: var(--radius-sm);
   background: var(--panel);
@@ -39,7 +39,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 48px;
+  font-size: 3rem;
   line-height: 0.95;
   color: var(--accent);
   transform: rotate(-2deg);
@@ -50,7 +50,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 30px;
+  font-size: 1.875rem;
   color: var(--accent);
 }
 
@@ -58,12 +58,12 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 22px;
+  font-size: 1.375rem;
 }
 
 .lead {
   margin: 0;
-  font-size: 15px;
+  font-size: 0.9375rem;
   color: var(--muted);
 }
 
@@ -74,28 +74,28 @@
 .panel {
   background: var(--panel);
   border: var(--outline);
-  border-radius: 20px;
-  box-shadow: 0 5px 0 var(--ink);
-  padding: 16px;
+  border-radius: 1.25rem;
+  box-shadow: 0 0.3125rem 0 var(--ink);
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0.875rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .label {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 1px;
   color: var(--muted);
@@ -105,13 +105,13 @@
 .input,
 .select {
   width: 100%;
-  min-height: 56px;
+  min-height: 3.5rem;
   border: var(--outline);
-  border-radius: 16px;
+  border-radius: 1rem;
   box-shadow: var(--drop-sm);
-  padding: 0 16px;
+  padding: 0 1rem;
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 800;
   background: #ffffff;
   color: #1b1426;
@@ -129,24 +129,24 @@
 
 .codeInput {
   text-transform: uppercase;
-  letter-spacing: 4px;
+  letter-spacing: 0.25rem;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 1.625rem;
   text-align: center;
 }
 
 .check {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  font-size: 15px;
+  gap: 0.625rem;
+  min-height: 2.75rem;
+  font-size: 0.9375rem;
   cursor: pointer;
 }
 
 .check input {
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   accent-color: var(--red);
 }
 
@@ -156,18 +156,18 @@
   text-align: center;
   text-decoration: none;
   border: var(--outline);
-  border-radius: 20px;
-  box-shadow: 0 7px 0 var(--ink);
-  padding: 14px;
+  border-radius: 1.25rem;
+  box-shadow: 0 0.4375rem 0 var(--ink);
+  padding: 0.875rem;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 1.625rem;
   letter-spacing: 1px;
   cursor: pointer;
   transition: transform 80ms ease, box-shadow 80ms ease;
 }
 
 .button:active:not(:disabled) {
-  transform: translateY(5px);
+  transform: translateY(0.3125rem);
   box-shadow: 0 2px 0 var(--ink);
 }
 
@@ -192,11 +192,11 @@
 
 .small {
   width: auto;
-  font-size: 15px;
-  padding: 8px 12px;
-  border-radius: 12px;
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
   box-shadow: var(--drop-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .danger {
@@ -209,10 +209,10 @@
 .textLink {
   background: none;
   border: none;
-  padding: 10px;
+  padding: 0.625rem;
   font-family: var(--font-body);
   font-weight: 900;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--accent);
   text-decoration: underline;
   cursor: pointer;
@@ -224,9 +224,9 @@
   background: var(--red);
   color: var(--cream);
   border: var(--outline);
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-size: 15px;
+  border-radius: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
 }
 
 .notice {
@@ -234,9 +234,9 @@
   background: var(--teal);
   color: var(--ink);
   border: var(--outline);
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-size: 15px;
+  border-radius: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
 }
 
 .stamp {
@@ -244,12 +244,17 @@
   background: var(--teal);
   color: var(--ink);
   border: var(--outline);
-  border-radius: 14px;
+  border-radius: 0.875rem;
   box-shadow: var(--drop-sm);
-  padding: 6px 14px;
+  padding: 0.375rem 0.875rem;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 1.125rem;
   transform: rotate(-3deg);
+}
+
+/* Spans both columns on big screens (see below). */
+.span {
+  min-width: 0;
 }
 
 .spacer {
@@ -257,8 +262,8 @@
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   flex-shrink: 0;
   border-radius: 50%;
   border: var(--outline);
@@ -266,13 +271,13 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 1.0625rem;
   color: var(--ink);
 }
 
 .code {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 1.375rem;
   letter-spacing: 2px;
 }
 
@@ -282,22 +287,22 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
   border: 2px solid var(--ink);
   border-radius: var(--radius-sm);
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   background: var(--panel-sunken);
 }
 
 .rowMain {
-  flex: 1 1 160px;
+  flex: 1 1 10rem;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -307,34 +312,84 @@
 
 .rowActions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .tag {
   display: inline-block;
   border: 2px solid var(--ink);
-  border-radius: 8px;
-  padding: 0 6px;
-  font-size: 11px;
+  border-radius: 0.5rem;
+  padding: 0 0.375rem;
+  font-size: 0.6875rem;
   font-weight: 900;
   letter-spacing: 1px;
   background: var(--gold);
   color: var(--ink);
-  margin-right: 4px;
+  margin-right: 0.25rem;
 }
 
 /* Inside the signed-in app the header already clears the status bar. */
 .appBody .screen {
-  padding-top: 16px;
+  padding-top: 1rem;
+}
+
+/* ---- Responsive shell ------------------------------------------------- */
+
+/* Room for the bottom bar on phones; the side rail on wider/landscape screens. */
+.shell {
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px), (orientation: landscape) and (max-height: 520px) {
+  .shell {
+    padding-bottom: 0;
+    padding-left: calc(var(--rail-w) + env(safe-area-inset-left));
+  }
+}
+
+/* Tablets and landscape: a wider column. */
+@media (min-width: 640px) {
+  .screen {
+    max-width: 40rem;
+  }
+
+  .wide {
+    max-width: 50rem;
+  }
+}
+
+/* Big screens: cards flow into two columns; titles and wide pieces span both. */
+@media (min-width: 1100px) {
+  .appBody .screen {
+    display: block;
+    max-width: 72rem;
+    columns: 2 22rem;
+    column-gap: 1.5rem;
+  }
+
+  .appBody .screen > * {
+    break-inside: avoid;
+    margin: 0 0 1.25rem;
+  }
+
+  .appBody .screen > :first-child,
+  .appBody .screen > h1,
+  .appBody .screen > .span {
+    column-span: all;
+  }
+
+  .appBody .screen > .spacer {
+    display: none;
+  }
 }
 
 /* Collapsible panel (<details>): closed by default, tap the header to open. */
 .collapsibleSummary {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 44px;
+  gap: 0.625rem;
+  min-height: 2.75rem;
   cursor: pointer;
   list-style: none;
 }

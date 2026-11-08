@@ -1,18 +1,18 @@
 .chips {
   display: flex;
-  gap: 5px;
+  gap: 0.3125rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .chip {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 0.5rem;
   border: 2px solid var(--ink);
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
   justify-content: center;

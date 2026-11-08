@@ -4,16 +4,16 @@
   border: var(--outline);
   border-radius: var(--radius-lg);
   box-shadow: var(--drop-lg);
-  padding: 16px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   transform: rotate(-1deg);
 }
 
 .heroKicker {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 0.875rem;
   letter-spacing: 2px;
   color: var(--red-soft-text);
 }
@@ -22,7 +22,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 30px;
+  font-size: 1.875rem;
   line-height: 1;
 }
 
@@ -30,7 +30,7 @@
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .roundChip {
@@ -38,10 +38,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   border: 2px solid var(--ink);
-  border-radius: 10px;
-  padding: 4px 2px;
+  border-radius: 0.625rem;
+  padding: 0.25rem 2px;
   text-align: center;
   text-decoration: none;
   background: #8e1a29;
@@ -50,12 +50,12 @@
 
 .roundChipName {
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.1;
 }
 
 .roundChipState {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 900;
 }
 
@@ -80,12 +80,12 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .tieLabel {
   padding: 0;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 900;
   letter-spacing: 1px;
   color: var(--muted);
@@ -95,20 +95,20 @@
 .tieRow {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .teamButton {
   position: relative;
-  min-height: 56px;
+  min-height: 3.5rem;
   border: var(--outline);
-  border-radius: 14px;
+  border-radius: 0.875rem;
   background: var(--panel);
   color: var(--text);
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
   cursor: pointer;
 }
 
@@ -130,18 +130,18 @@
 }
 
 .seed {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 900;
   opacity: 0.75;
 }
 
 .teamCode {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .teamName {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 800;
   opacity: 0.8;
   min-width: 0;
@@ -151,23 +151,23 @@
 }
 
 .stepper {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
   background: var(--cream);
   border: var(--outline);
   box-shadow: var(--drop-sm);
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 1.75rem;
   color: var(--ink);
   cursor: pointer;
 }
 
 .goals {
   font-family: var(--font-display);
-  font-size: 60px;
+  font-size: 3.75rem;
   line-height: 1;
-  min-width: 60px;
+  min-width: 3.75rem;
   text-align: center;
 }
 
@@ -176,26 +176,26 @@
   background: var(--ink);
   color: var(--cream);
   border: 3px solid var(--gold);
-  border-radius: 16px;
-  padding: 8px 12px;
-  font-size: 13px;
+  border-radius: 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 900;
 }
 
 .resultRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
+  gap: 0.5rem;
   align-items: center;
   border: 2px solid var(--ink);
-  border-radius: 14px;
-  padding: 10px 12px;
+  border-radius: 0.875rem;
+  padding: 0.625rem 0.75rem;
   background: var(--panel-sunken);
 }
 
 .resultTeams {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .winnerMark {
@@ -204,10 +204,10 @@
 
 .verdict {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 0.9375rem;
   border: 2px solid var(--ink);
-  border-radius: 10px;
-  padding: 2px 8px;
+  border-radius: 0.625rem;
+  padding: 2px 0.5rem;
   white-space: nowrap;
 }
 
@@ -229,24 +229,24 @@
 .boardHead,
 .boardRow {
   display: grid;
-  grid-template-columns: 22px 30px minmax(0, 1fr) repeat(var(--rounds), 26px) 40px;
+  grid-template-columns: 1.375rem 1.875rem minmax(0, 1fr) repeat(var(--rounds), 1.625rem) 2.5rem;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .boardHead {
-  padding: 0 12px;
-  font-size: 10px;
+  padding: 0 0.75rem;
+  font-size: 0.625rem;
   font-weight: 900;
   letter-spacing: 1px;
   color: var(--muted);
 }
 
 .boardRow {
-  min-height: 46px;
+  min-height: 2.875rem;
   border: 2px solid var(--ink);
-  border-radius: 14px;
-  padding: 0 12px;
+  border-radius: 0.875rem;
+  padding: 0 0.75rem;
   background: var(--panel);
 }
 
@@ -263,17 +263,17 @@
 .boardNum {
   text-align: center;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .boardRank {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .boardName {
   font-weight: 900;
-  font-size: 14px;
+  font-size: 0.875rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -282,5 +282,12 @@
 .boardPts {
   text-align: right;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 1.125rem;
+}
+
+/* Wide screens: a long banner only needs a hint of tilt. */
+@media (min-width: 1100px) {
+  .hero {
+    transform: rotate(-0.4deg);
+  }
 }

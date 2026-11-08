@@ -39,14 +39,14 @@ export function LoginForm() {
             name="password"
             type={showPassword ? "text" : "password"}
             className={ui.input}
-            style={{ paddingRight: 80 }}
+            style={{ paddingRight: "5rem" }}
             autoComplete="current-password"
             required
           />
           <button
             type="button"
             className={ui.textLink}
-            style={{ position: "absolute", right: 4, top: 6, color: "#5e5470", textDecoration: "none" }}
+            style={{ position: "absolute", right: "0.25rem", top: "0.375rem", color: "#5e5470", textDecoration: "none" }}
             onClick={() => setShowPassword((v) => !v)}
             aria-pressed={showPassword}
           >

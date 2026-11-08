@@ -12,7 +12,7 @@ export function CreateTournamentForm() {
 
   return (
     <form action={formAction} className={ui.form}>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
         <button
           type="button"
           className={`${ui.button} ${ui.secondary} ${ui.small}`}
@@ -44,7 +44,7 @@ export function CreateTournamentForm() {
           id="t-rounds"
           name="rounds"
           className={ui.input}
-          style={{ minHeight: 140, padding: 12, lineHeight: 1.4 }}
+          style={{ minHeight: "8.75rem", padding: "0.75rem", lineHeight: 1.4 }}
           value={rounds}
           onChange={(e) => setRounds(e.target.value)}
           required
@@ -55,7 +55,7 @@ export function CreateTournamentForm() {
           {state.error}
         </p>
       )}
-      <button type="submit" className={`${ui.button} ${ui.primary}`} disabled={pending} style={{ fontSize: 22 }}>
+      <button type="submit" className={`${ui.button} ${ui.primary}`} disabled={pending} style={{ fontSize: "1.375rem" }}>
         {pending ? "CREATING…" : "CREATE TOURNAMENT"}
       </button>
     </form>

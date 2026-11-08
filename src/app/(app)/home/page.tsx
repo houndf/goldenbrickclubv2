@@ -26,10 +26,10 @@ export default async function HomePage() {
   return (
     <main className={ui.screen}>
       <div>
-        <h1 className={ui.bigTitle} style={{ fontSize: 40, overflowWrap: "anywhere" }}>
+        <h1 className={ui.bigTitle} style={{ fontSize: "2.5rem", overflowWrap: "anywhere" }}>
           HEY, {player.username.toUpperCase()}!
         </h1>
-        <p className={ui.lead} style={{ marginTop: 12 }}>
+        <p className={ui.lead} style={{ marginTop: "0.75rem" }}>
           It&apos;s the offseason. Picks open when the 2027 schedule drops.
         </p>
       </div>
@@ -47,11 +47,11 @@ export default async function HomePage() {
             <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4" />
           </svg>
           <span style={{ display: "flex", flexDirection: "column", flexGrow: 1, minWidth: 0 }}>
-            <span style={{ fontSize: 12, fontWeight: 900, letterSpacing: 1 }}>{goldOnly ? "2026 GOLD CHAMPION" : "2026 CHAMPION"}</span>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: 26, lineHeight: 1.05, overflowWrap: "anywhere" }}>
+            <span style={{ fontSize: "0.75rem", fontWeight: 900, letterSpacing: 1 }}>{goldOnly ? "2026 GOLD CHAMPION" : "2026 CHAMPION"}</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.625rem", lineHeight: 1.05, overflowWrap: "anywhere" }}>
               {champLook?.username ?? champ.name}
             </span>
-            <span style={{ fontSize: 13 }}>{champ.points} pts · see the final table ›</span>
+            <span style={{ fontSize: "0.8125rem" }}>{champ.points} pts · see the final table ›</span>
           </span>
         </Link>
       )}
@@ -59,8 +59,8 @@ export default async function HomePage() {
       {mine && !hideResults && (
         <section className={ui.panel} aria-label="Your 2026 season">
           <span className={ui.label}>{goldOnly ? "Your 2026 among gold members" : "Your 2026"}</span>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: 44, lineHeight: 1 }}>#{mine.rank}</span>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "0.875rem", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "2.75rem", lineHeight: 1 }}>#{mine.rank}</span>
             <span className={ui.muted}>
               {mine.points} pts · {mine.picks} picks · {myTrophies} segment {myTrophies === 1 ? "win" : "wins"}
             </span>

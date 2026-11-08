@@ -25,7 +25,7 @@ export default async function JoinPage({ searchParams }: PageProps<"/join">) {
           <br />
           CLUB!
         </h1>
-        <p className={ui.lead} style={{ marginTop: 14 }}>
+        <p className={ui.lead} style={{ marginTop: "0.875rem" }}>
           Golden Brick Club is invite-only. Enter the code you were sent.
         </p>
       </div>

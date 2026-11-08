@@ -39,7 +39,7 @@ export default async function FriendsPage() {
                   {p.username}
                   {p.id === me.id ? " (you)" : ""}
                 </span>
-                <span style={{ fontSize: 13, opacity: 0.8 }}>{!showFinish ? "Results hidden" : f ? `2026: #${f.rank} · ${f.points} pts` : "New for 2027"}</span>
+                <span style={{ fontSize: "0.8125rem", opacity: 0.8 }}>{!showFinish ? "Results hidden" : f ? `2026: #${f.rank} · ${f.points} pts` : "New for 2027"}</span>
               </div>
               <span>
                 {p.role === "admin" && <span className={ui.tag}>COMMISH</span>}

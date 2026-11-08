@@ -32,7 +32,7 @@ export function ChangePasswordForm() {
           Password changed.
         </p>
       )}
-      <button type="submit" className={`${ui.button} ${ui.primary}`} disabled={pending} style={{ fontSize: 22 }}>
+      <button type="submit" className={`${ui.button} ${ui.primary}`} disabled={pending} style={{ fontSize: "1.375rem" }}>
         {pending ? "SAVING…" : "CHANGE PASSWORD"}
       </button>
     </form>

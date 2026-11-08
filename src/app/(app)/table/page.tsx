@@ -43,9 +43,9 @@ export default async function TablePage() {
 
   return (
     <main className={ui.screen}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.75rem" }}>
         <h1 className={ui.screenTitle}>TABLE</h1>
-        <span className={ui.stamp} style={{ fontSize: 15, background: goldOnly ? "var(--gold)" : undefined }}>
+        <span className={ui.stamp} style={{ fontSize: "0.9375rem", background: goldOnly ? "var(--gold)" : undefined }}>
           {goldOnly ? "2026 · GOLD ONLY" : "2026 · FINAL"}
         </span>
       </div>
@@ -56,7 +56,7 @@ export default async function TablePage() {
         <h2 id="season-heading" className={ui.sectionTitle}>
           Season standings
         </h2>
-        <p className={ui.lead} style={{ fontSize: 13 }}>
+        <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
           {season.matchCount} matches · old exact-score rules · ties broken by lowest accuracy offset
         </p>
         <StandingsList rows={season.standings} looks={season.looks} meId={player.id} showOffset oracles={oracles} />
@@ -65,7 +65,7 @@ export default async function TablePage() {
       <details className={`${ui.panel} ${ui.collapsible}`}>
         <summary className={ui.collapsibleSummary}>
           <span className={ui.sectionTitle}>Segment trophies</span>
-          <span className={ui.muted} style={{ fontSize: 13 }}>{season.segments.length} segments</span>
+          <span className={ui.muted} style={{ fontSize: "0.8125rem" }}>{season.segments.length} segments</span>
           <svg className={ui.chevron} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M6 9l6 6 6-6" />
           </svg>
@@ -74,8 +74,8 @@ export default async function TablePage() {
           {season.segments.map((s) => (
             <li key={s.number} className={ui.row}>
               <div className={ui.rowMain}>
-                <span style={{ fontFamily: "var(--font-display)", fontSize: 17 }}>
-                  SEGMENT {s.number} <span className={ui.muted} style={{ fontFamily: "var(--font-body)", fontSize: 12 }}>· {s.matches} matches</span>
+                <span style={{ fontFamily: "var(--font-display)", fontSize: "1.0625rem" }}>
+                  SEGMENT {s.number} <span className={ui.muted} style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem" }}>· {s.matches} matches</span>
                 </span>
                 {s.winner && (
                   <span>
@@ -94,7 +94,7 @@ export default async function TablePage() {
             </li>
           ))}
         </ul>
-        {!player.extraGold && <p className={ui.lead} style={{ fontSize: 13 }}>Wooden Spoon results are for Extra Gold members.</p>}
+        {!player.extraGold && <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>Wooden Spoon results are for Extra Gold members.</p>}
       </details>
     </main>
   );

@@ -3,11 +3,11 @@
   color: var(--cream);
   border: var(--outline);
   border-radius: var(--radius-lg);
-  box-shadow: 0 7px 0 var(--ink);
-  padding: 14px 16px;
+  box-shadow: 0 0.4375rem 0 var(--ink);
+  padding: 0.875rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   transform: rotate(-1deg);
 }
 
@@ -15,20 +15,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .label {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 1rem;
   letter-spacing: 2px;
   color: var(--red-soft-text);
 }
 
 .meta {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 900;
   color: var(--red-soft-text);
 }
@@ -37,7 +37,7 @@
   margin: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .tile {
@@ -48,18 +48,18 @@
   color: var(--ink);
   border: var(--outline);
   border-radius: var(--radius-sm);
-  padding: 6px 0;
+  padding: 0.375rem 0;
 }
 
 .tileValue {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 36px;
+  font-size: 2.25rem;
   line-height: 1;
 }
 
 .tileLabel {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 900;
   letter-spacing: 1px;
 }

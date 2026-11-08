@@ -4,16 +4,16 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   border: 2px solid var(--ink);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   background: var(--panel);
 }
 
@@ -28,9 +28,9 @@
 }
 
 .rank {
-  width: 20px;
+  width: 1.25rem;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .name {
@@ -38,19 +38,19 @@
   min-width: 0;
   overflow-wrap: anywhere;
   font-weight: 900;
-  font-size: 15px;
+  font-size: 0.9375rem;
   display: flex;
   flex-direction: column;
 }
 
 .offset {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 800;
   opacity: 0.75;
 }
 
 .points {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 1.125rem;
   white-space: nowrap;
 }
