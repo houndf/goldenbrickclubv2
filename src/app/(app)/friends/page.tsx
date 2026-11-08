@@ -1,6 +1,7 @@
 import { Avatar } from "@/components/Avatar";
 import { getLegacySeason } from "@/lib/archiveData";
 import { requirePlayer } from "@/lib/player";
+import { getLeagueSettings } from "@/lib/settings";
 import { isGoldView } from "@/lib/view";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
@@ -12,10 +13,12 @@ export default async function FriendsPage() {
   const me = await requirePlayer();
   const goldOnly = await isGoldView(me);
   const supabase = await createSupabaseServerClient();
-  const [{ data: profiles }, season] = await Promise.all([
+  const [{ data: profiles }, season, settings] = await Promise.all([
     supabase.from("profiles").select("id, username, initials, avatar_color, role, extra_gold").order("username"),
     getLegacySeason(2026, { goldOnly }),
+    getLeagueSettings(),
   ]);
+  const showFinish = !settings.resultsHidden || me.role === "admin";
   const members = (profiles ?? []).filter((p) => !goldOnly || p.extra_gold);
   const finish = new Map((season?.standings ?? []).filter((r) => r.profileId).map((r) => [r.profileId!, r]));
 
@@ -36,7 +39,7 @@ export default async function FriendsPage() {
                   {p.username}
                   {p.id === me.id ? " (you)" : ""}
                 </span>
-                <span style={{ fontSize: 13, opacity: 0.8 }}>{f ? `2026: #${f.rank} · ${f.points} pts` : "New for 2027"}</span>
+                <span style={{ fontSize: 13, opacity: 0.8 }}>{!showFinish ? "Results hidden" : f ? `2026: #${f.rank} · ${f.points} pts` : "New for 2027"}</span>
               </div>
               <span>
                 {p.role === "admin" && <span className={ui.tag}>COMMISH</span>}

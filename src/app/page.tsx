@@ -3,11 +3,12 @@ import { BrickLogo } from "@/components/BrickLogo";
 import { ClubRecordCard } from "@/components/ClubRecordCard";
 import { StandingsList } from "@/components/StandingsList";
 import { getLegacySeason } from "@/lib/archiveData";
+import { getLeagueSettings } from "@/lib/settings";
 import styles from "./page.module.css";
 
 /** Welcome — the public front door, visible before login. */
 export default async function WelcomePage() {
-  const season = await getLegacySeason(2026);
+  const [season, settings] = await Promise.all([getLegacySeason(2026), getLeagueSettings()]);
 
   return (
     <main className={styles.screen}>
@@ -23,7 +24,7 @@ export default async function WelcomePage() {
 
       {season?.club && <ClubRecordCard record={season.club} label="ATLANTA UNITED · 2026" />}
 
-      {season && season.standings.length > 0 && (
+      {season && season.standings.length > 0 && !settings.resultsHidden && (
         <section className={styles.panel} aria-labelledby="top3-heading">
           <div className={styles.cardHead}>
             <h2 id="top3-heading" className={styles.panelLabel}>

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ClubRecordCard } from "@/components/ClubRecordCard";
+import { HiddenResultsBanner, HiddenResultsCard } from "@/components/HiddenResults";
 import { getLegacySeason } from "@/lib/archiveData";
 import { requirePlayer } from "@/lib/player";
+import { getLeagueSettings } from "@/lib/settings";
 import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
 
@@ -12,7 +14,9 @@ export const metadata = { title: "Home · Golden Brick Club" };
 export default async function HomePage() {
   const player = await requirePlayer();
   const goldOnly = await isGoldView(player);
-  const season = await getLegacySeason(2026, { goldOnly });
+  const [season, settings] = await Promise.all([getLegacySeason(2026, { goldOnly }), getLeagueSettings()]);
+  const isAdmin = player.role === "admin";
+  const hideResults = settings.resultsHidden && !isAdmin;
 
   const champ = season?.standings[0];
   const mine = season?.standings.find((r) => r.profileId === player.id);
@@ -30,7 +34,10 @@ export default async function HomePage() {
         </p>
       </div>
 
-      {champ && (
+      {settings.resultsHidden && isAdmin && <HiddenResultsBanner />}
+      {hideResults && <HiddenResultsCard />}
+
+      {champ && !hideResults && (
         <Link
           href="/table"
           className={ui.panel}
@@ -49,7 +56,7 @@ export default async function HomePage() {
         </Link>
       )}
 
-      {mine && (
+      {mine && !hideResults && (
         <section className={ui.panel} aria-label="Your 2026 season">
           <span className={ui.label}>{goldOnly ? "Your 2026 among gold members" : "Your 2026"}</span>
           <div style={{ display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>

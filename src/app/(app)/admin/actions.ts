@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { temporaryPassword } from "@/lib/accounts";
 import { requireAdmin } from "@/lib/player";
+import { SETTINGS_TAG } from "@/lib/settings";
 import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface InviteState {
@@ -89,4 +90,17 @@ export async function setExtraGoldAction(form: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   await supabase.from("profiles").update({ extra_gold: extraGold }).eq("id", playerId);
   revalidatePath("/admin");
+}
+
+export async function setResultsHiddenAction(form: FormData): Promise<void> {
+  const admin = await requireAdmin();
+  const hidden = form.get("hidden") === "true";
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("league_settings")
+    .update({ results_hidden: hidden, updated_by: admin.id, updated_at: new Date().toISOString() })
+    .eq("id", true);
+  if (error) console.error("setResultsHidden failed", error);
+  updateTag(SETTINGS_TAG);
+  revalidatePath("/", "layout");
 }

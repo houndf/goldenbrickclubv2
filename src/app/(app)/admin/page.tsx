@@ -2,7 +2,8 @@ import { headers } from "next/headers";
 import { requireAdmin } from "@/lib/player";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
-import { revokeInviteAction, setExtraGoldAction, setRoleAction } from "./actions";
+import { getLeagueSettings } from "@/lib/settings";
+import { revokeInviteAction, setExtraGoldAction, setResultsHiddenAction, setRoleAction } from "./actions";
 import { CopyButton } from "./CopyButton";
 import { CreateInviteForm } from "./CreateInviteForm";
 import { ResetPasswordButton } from "./ResetPasswordButton";
@@ -40,6 +41,7 @@ export default async function AdminPage() {
     supabase.from("legacy_players").select("id, name, profile_id").order("name"),
   ]);
 
+  const settings = await getLeagueSettings();
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
   const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
@@ -59,6 +61,34 @@ export default async function AdminPage() {
       <div className={ui.topBar}>
         <h1 className={ui.screenTitle}>ADMIN PORTAL</h1>
       </div>
+
+      <section className={ui.panel} aria-labelledby="results-switch">
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ flex: "1 1 200px" }}>
+            <h2 id="results-switch" className={ui.sectionTitle}>
+              Hide results {settings.resultsHidden ? "🤫" : ""}
+            </h2>
+            <p className={ui.lead} style={{ fontSize: 13 }}>
+              {settings.resultsHidden
+                ? "Players can't see standings, the top 3, the champion or their rank. Admins still can."
+                : "Hide standings, the top 3, the champion and ranks from players, just for fun."}
+            </p>
+          </div>
+          <form action={setResultsHiddenAction}>
+            <input type="hidden" name="hidden" value={String(!settings.resultsHidden)} />
+            <button
+              type="submit"
+              role="switch"
+              aria-checked={settings.resultsHidden}
+              aria-labelledby="results-switch"
+              className={`${ui.button} ${ui.small} ${settings.resultsHidden ? ui.primary : ui.secondary}`}
+              style={{ minWidth: 110 }}
+            >
+              {settings.resultsHidden ? "HIDDEN" : "SHOWING"}
+            </button>
+          </form>
+        </div>
+      </section>
 
       <section className={ui.panel} aria-labelledby="new-invite">
         <h2 id="new-invite" className={ui.sectionTitle}>

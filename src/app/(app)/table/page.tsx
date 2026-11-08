@@ -1,6 +1,8 @@
+import { HiddenResultsBanner, HiddenResultsCard } from "@/components/HiddenResults";
 import { StandingsList } from "@/components/StandingsList";
 import { getLegacySeason } from "@/lib/archiveData";
 import { requirePlayer } from "@/lib/player";
+import { getLeagueSettings } from "@/lib/settings";
 import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
 
@@ -10,7 +12,17 @@ export const metadata = { title: "Table · Golden Brick Club" };
 export default async function TablePage() {
   const player = await requirePlayer();
   const goldOnly = await isGoldView(player);
-  const season = await getLegacySeason(2026, { goldOnly });
+  const [season, settings] = await Promise.all([getLegacySeason(2026, { goldOnly }), getLeagueSettings()]);
+  const isAdmin = player.role === "admin";
+
+  if (settings.resultsHidden && !isAdmin) {
+    return (
+      <main className={ui.screen}>
+        <h1 className={ui.screenTitle}>TABLE</h1>
+        <HiddenResultsCard />
+      </main>
+    );
+  }
 
   if (!season) {
     return (
@@ -32,6 +44,8 @@ export default async function TablePage() {
           {goldOnly ? "2026 · GOLD ONLY" : "2026 · FINAL"}
         </span>
       </div>
+
+      {settings.resultsHidden && <HiddenResultsBanner />}
 
       <section className={ui.panel} aria-labelledby="season-heading">
         <h2 id="season-heading" className={ui.sectionTitle}>
