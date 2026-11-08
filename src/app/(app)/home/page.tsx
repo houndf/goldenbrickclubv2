@@ -70,7 +70,7 @@ export default async function HomePage() {
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.625rem", lineHeight: 1.05, overflowWrap: "anywhere" }}>
               {spoonLook?.username ?? spoon.name}
             </span>
-            <span style={{ fontSize: "0.8125rem" }}>{spoon.points} pts · bottom of the table ›</span>
+            <span style={{ fontSize: "0.8125rem" }}>{spoon.points} pts · &apos;Bout to get cooking! ›</span>
           </span>
         </Link>
       )}
