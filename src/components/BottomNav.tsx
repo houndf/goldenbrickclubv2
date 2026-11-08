@@ -32,11 +32,11 @@ type Tab = { href: string; label: string; icon: keyof typeof icons };
 
 export function BottomNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  // Friends (/friends) is hidden from the bar for now; the page still works.
   const tabs: Tab[] = [
     { href: "/home", label: "Home", icon: "home" },
     { href: "/pick", label: "Pick", icon: "pick" },
     { href: "/table", label: "Table", icon: "table" },
-    { href: "/friends", label: "Friends", icon: "friends" },
   ];
   if (isAdmin) tabs.push({ href: "/admin", label: "Admin", icon: "admin" });
 
