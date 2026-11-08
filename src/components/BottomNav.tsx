@@ -20,6 +20,7 @@ const icons = {
       <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6" />
     </>
   ),
+  cup: <path d="M4 5h4v4H4zM4 15h4v4H4zM8 7h4v10H8M12 12h4M16 9h4v6h-4z" />,
   admin: (
     <>
       <path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z" />
@@ -30,7 +31,7 @@ const icons = {
 
 type Tab = { href: string; label: string; icon: keyof typeof icons };
 
-export function BottomNav({ isAdmin }: { isAdmin: boolean }) {
+export function BottomNav({ isAdmin, showCup }: { isAdmin: boolean; showCup: boolean }) {
   const pathname = usePathname();
   // Friends (/friends) is hidden from the bar for now; the page still works.
   const tabs: Tab[] = [
@@ -38,6 +39,8 @@ export function BottomNav({ isAdmin }: { isAdmin: boolean }) {
     { href: "/pick", label: "Pick", icon: "pick" },
     { href: "/table", label: "Table", icon: "table" },
   ];
+  // The Cup tab only appears while a tournament is live.
+  if (showCup) tabs.push({ href: "/cup", label: "Cup", icon: "cup" });
   if (isAdmin) tabs.push({ href: "/admin", label: "Admin", icon: "admin" });
 
   return (

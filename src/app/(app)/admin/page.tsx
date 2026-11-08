@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import Link from "next/link";
 import { requireAdmin } from "@/lib/player";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
@@ -89,6 +90,10 @@ export default async function AdminPage() {
           </form>
         </div>
       </section>
+
+      <Link href="/admin/cup" className={`${ui.button} ${ui.primary}`} style={{ fontSize: 22 }}>
+        TOURNAMENTS (CUPS) ›
+      </Link>
 
       <section className={ui.panel} aria-labelledby="new-invite">
         <h2 id="new-invite" className={ui.sectionTitle}>

@@ -10,11 +10,13 @@ export function StandingsList({
   looks,
   meId,
   showOffset = false,
+  oracles = {},
 }: {
   rows: StandingRow[];
   looks: Record<string, PlayerLook>;
   meId?: string;
   showOffset?: boolean;
+  oracles?: Record<string, string[]>;
 }) {
   return (
     <ol className={styles.list}>
@@ -25,7 +27,12 @@ export function StandingsList({
         return (
           <li key={row.playerId} className={cls}>
             <span className={styles.rank}>{row.rank}</span>
-            <Avatar initials={look?.initials ?? initialsFor(row.name)} color={look?.color} size={30} />
+            <Avatar
+              initials={look?.initials ?? initialsFor(row.name)}
+              color={look?.color}
+              size={30}
+              oracle={row.profileId ? (oracles[row.profileId]?.length ?? 0) : 0}
+            />
             <span className={styles.name}>
               {look?.username ?? row.name}
               {me ? " (you)" : ""}

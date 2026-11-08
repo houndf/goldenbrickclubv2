@@ -1,0 +1,286 @@
+.hero {
+  background: var(--red);
+  color: var(--cream);
+  border: var(--outline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--drop-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform: rotate(-1deg);
+}
+
+.heroKicker {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--red-soft-text);
+}
+
+.heroTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.rounds {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.roundChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 4px 2px;
+  text-align: center;
+  text-decoration: none;
+  background: #8e1a29;
+  color: var(--red-soft-text);
+}
+
+.roundChipName {
+  font-family: var(--font-display);
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.roundChipState {
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.chipDone {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.chipOpen {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.chipSelected {
+  outline: 3px solid var(--cream);
+  outline-offset: 2px;
+}
+
+.tie {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tieLabel {
+  padding: 0;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.tieRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.teamButton {
+  position: relative;
+  min-height: 56px;
+  border: var(--outline);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.teamOn {
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: var(--drop-sm);
+}
+
+.teamButton:has(.radio:focus-visible) {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.seed {
+  font-size: 11px;
+  font-weight: 900;
+  opacity: 0.75;
+}
+
+.teamCode {
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+.teamName {
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0.8;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--cream);
+  border: var(--outline);
+  box-shadow: var(--drop-sm);
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.goals {
+  font-family: var(--font-display);
+  font-size: 60px;
+  line-height: 1;
+  min-width: 60px;
+  text-align: center;
+}
+
+.footerNote {
+  margin: 0;
+  background: var(--ink);
+  color: var(--cream);
+  border: 3px solid var(--gold);
+  border-radius: 16px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.resultRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: var(--panel-sunken);
+}
+
+.resultTeams {
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+.winnerMark {
+  color: var(--good);
+}
+
+.verdict {
+  font-family: var(--font-display);
+  font-size: 15px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.right {
+  background: var(--teal);
+  color: var(--ink);
+}
+
+.wrong {
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.pending {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.boardHead,
+.boardRow {
+  display: grid;
+  grid-template-columns: 22px 30px minmax(0, 1fr) repeat(var(--rounds), 26px) 40px;
+  align-items: center;
+  gap: 6px;
+}
+
+.boardHead {
+  padding: 0 12px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.boardRow {
+  min-height: 46px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 0 12px;
+  background: var(--panel);
+}
+
+.boardFirst {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.boardMe {
+  background: var(--teal);
+  color: var(--ink);
+}
+
+.boardNum {
+  text-align: center;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.boardRank {
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+.boardName {
+  font-weight: 900;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boardPts {
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 18px;
+}

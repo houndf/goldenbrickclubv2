@@ -3,6 +3,7 @@ import { StandingsList } from "@/components/StandingsList";
 import { getLegacySeason } from "@/lib/archiveData";
 import { requirePlayer } from "@/lib/player";
 import { getLeagueSettings } from "@/lib/settings";
+import { getOracleWins } from "@/lib/tournamentData";
 import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
 
@@ -12,7 +13,11 @@ export const metadata = { title: "Table · Golden Brick Club" };
 export default async function TablePage() {
   const player = await requirePlayer();
   const goldOnly = await isGoldView(player);
-  const [season, settings] = await Promise.all([getLegacySeason(2026, { goldOnly }), getLeagueSettings()]);
+  const [season, settings, oracles] = await Promise.all([
+    getLegacySeason(2026, { goldOnly }),
+    getLeagueSettings(),
+    getOracleWins(),
+  ]);
   const isAdmin = player.role === "admin";
 
   if (settings.resultsHidden && !isAdmin) {
@@ -54,7 +59,7 @@ export default async function TablePage() {
         <p className={ui.lead} style={{ fontSize: 13 }}>
           {season.matchCount} matches · old exact-score rules · ties broken by lowest accuracy offset
         </p>
-        <StandingsList rows={season.standings} looks={season.looks} meId={player.id} showOffset />
+        <StandingsList rows={season.standings} looks={season.looks} meId={player.id} showOffset oracles={oracles} />
       </section>
 
       <details className={`${ui.panel} ${ui.collapsible}`}>

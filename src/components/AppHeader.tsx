@@ -5,7 +5,7 @@ import { BrickLogo } from "./BrickLogo";
 import { BrickToggle } from "./BrickToggle";
 import styles from "./AppHeader.module.css";
 
-export function AppHeader({ player, goldOnly }: { player: Player; goldOnly: boolean }) {
+export function AppHeader({ player, goldOnly, oracle = 0 }: { player: Player; goldOnly: boolean; oracle?: number }) {
   return (
     <header className={styles.header}>
       {player.extraGold ? (
@@ -16,7 +16,7 @@ export function AppHeader({ player, goldOnly }: { player: Player; goldOnly: bool
         </span>
       )}
       <Link href="/profile" aria-label="Your profile" className={styles.avatarLink}>
-        <Avatar initials={player.initials} color={player.avatarColor} />
+        <Avatar initials={player.initials} color={player.avatarColor} oracle={oracle} />
       </Link>
     </header>
   );

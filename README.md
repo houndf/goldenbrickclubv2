@@ -30,6 +30,15 @@ Milestone 1 (foundation) in progress.
 
 Tie-breaker: most margin bets won. Values live in `src/lib/scoring/rules.ts`.
 
+## Tournaments (Cups)
+
+Separate from the season. Round-by-round: when a round's matchups are set,
+everyone picks who advances. Each correct pick scores the round's points
+(1, 2, 3, …); wrong or missed picks score 0. The final also takes a
+total-goals guess that breaks ties for the **[Tournament] Oracle** trophy.
+Winners get a 🔮 badge. The Cup tab shows only while a tournament is live.
+Admins run everything from `/admin/cup`.
+
 ## Setup
 
 1. **Database:** in the Supabase SQL editor, run each file in `supabase/migrations/` in order.
