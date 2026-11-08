@@ -159,6 +159,23 @@ async function syncTournaments(db: Db, teamId: Map<string, number>, notes: strin
       .maybeSingle();
 
     if (!row) {
+      // Adopt a tournament an admin already started by hand with the same name.
+      const { data: manual } = await db
+        .from("tournaments")
+        .select("id, status")
+        .eq("name", t.name)
+        .is("external_key", null)
+        .neq("status", "final")
+        .limit(1)
+        .maybeSingle();
+      if (manual) {
+        await db.from("tournaments").update({ external_key: t.key }).eq("id", manual.id);
+        row = manual;
+        notes.push(`tournament ${t.key}: adopted the one created in admin`);
+      }
+    }
+
+    if (!row) {
       // Go live straight away unless another tournament already is.
       const { data: live } = await db.from("tournaments").select("id").eq("status", "live").maybeSingle();
       const { data: created, error } = await db
@@ -174,6 +191,13 @@ async function syncTournaments(db: Db, teamId: Map<string, number>, notes: strin
       notes.push(`tournament ${t.key}: created (${created.status})`);
     }
     if (row.status === "final") continue;
+    if (row.status === "setup") {
+      const { data: live } = await db.from("tournaments").select("id").eq("status", "live").maybeSingle();
+      if (!live) {
+        await db.from("tournaments").update({ status: "live" }).eq("id", row.id);
+        notes.push(`tournament ${t.key}: now live`);
+      }
+    }
     await db.from("tournaments").update({ name: t.name, trophy_name: t.trophyName }).eq("id", row.id);
 
     for (const [i, r] of t.rounds.entries()) {
