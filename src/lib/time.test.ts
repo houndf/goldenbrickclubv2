@@ -8,6 +8,14 @@ describe("Eastern time helpers", () => {
     expect(easternLocalToIso("nonsense")).toBeNull();
   });
 
+  it("uses the right offset in the early hours of a clock-change day", () => {
+    // Clocks fall back at 2:00 AM on Nov 1, 2026: 3:00 AM that day is EST (−5).
+    expect(easternLocalToIso("2026-11-01T03:00")).toBe("2026-11-01T08:00:00.000Z");
+    // Clocks spring forward at 2:00 AM on Mar 8, 2026: 4:00 AM that day is EDT (−4).
+    expect(easternLocalToIso("2026-03-08T04:00")).toBe("2026-03-08T08:00:00.000Z");
+    expect(easternLocalToIso("2026-03-08T01:00")).toBe("2026-03-08T06:00:00.000Z");
+  });
+
   it("round-trips for the admin form", () => {
     expect(isoToEasternLocal("2026-11-22T20:00:00.000Z")).toBe("2026-11-22T15:00");
   });

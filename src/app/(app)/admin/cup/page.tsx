@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
 import { requireAdmin } from "@/lib/player";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatEastern, isoToEasternLocal } from "@/lib/time";
 import { roundState } from "@/lib/tournament";
 import { getTournamentDetail, getTournaments } from "@/lib/tournamentData";
@@ -29,6 +29,21 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
 
   const supabase = await createSupabaseServerClient();
   const { data: teams } = await supabase.from("teams").select("id, code, name").order("name");
+
+  // How many players picked each matchup. Counted with the server key because the
+  // admin's own session can't see other players' picks until the matchup locks,
+  // and a matchup with picks mustn't look empty (or it could be removed).
+  const pickCounts = new Map<number, number>();
+  if (detail && detail.ties.length > 0) {
+    const { data: rows } = await createSupabaseAdminClient()
+      .from("tournament_picks")
+      .select("tie_id")
+      .in(
+        "tie_id",
+        detail.ties.map((x) => x.id),
+      );
+    for (const r of rows ?? []) pickCounts.set(r.tie_id, (pickCounts.get(r.tie_id) ?? 0) + 1);
+  }
 
   return (
     <main className={`${ui.screen} ${ui.wide}`}>
@@ -119,7 +134,7 @@ export default async function AdminCupPage({ searchParams }: PageProps<"/admin/c
           {detail.rounds.map((round) => {
             const roundTies = detail.ties.filter((x) => x.roundId === round.id);
             const state = roundState(round, detail.ties);
-            const pickCount = (tieId: number) => detail.picks.filter((p) => p.tieId === tieId).length;
+            const pickCount = (tieId: number) => pickCounts.get(tieId) ?? 0;
             return (
               <section key={round.id} className={ui.panel} aria-labelledby={`round-${round.id}`}>
                 <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.5rem", flexWrap: "wrap" }}>

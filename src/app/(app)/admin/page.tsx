@@ -52,7 +52,9 @@ export default async function AdminPage() {
   const openInvites = allInvites.filter((i) => !i.used_at && !i.revoked_at);
   const legacyById = new Map((legacy ?? []).map((l) => [l.id, l]));
   const legacyByProfile = new Map((legacy ?? []).filter((l) => l.profile_id).map((l) => [l.profile_id, l.name]));
-  const legacyWithInvite = new Set(allInvites.map((i) => i.legacy_player_id).filter(Boolean));
+  const legacyWithInvite = new Set(
+    allInvites.filter((i) => !i.revoked_at).map((i) => i.legacy_player_id).filter(Boolean),
+  );
   const legacyOptions = (legacy ?? [])
     .filter((l) => !l.profile_id && !legacyWithInvite.has(l.id))
     .map((l) => ({ id: l.id, name: l.name }));

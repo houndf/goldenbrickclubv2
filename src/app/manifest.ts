@@ -7,7 +7,6 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "The Atlanta United prediction league.",
     start_url: "/",
     display: "standalone",
-    orientation: "portrait",
     background_color: "#1b1426",
     theme_color: "#1b1426",
     icons: [

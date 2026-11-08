@@ -6,12 +6,15 @@ export function easternLocalToIso(local: string): string | null {
   const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})$/.exec(local.trim());
   if (!m) return null;
   const [, date, time] = m;
-  const guess = new Date(`${date}T${time}:00Z`);
-  const offset = new Intl.DateTimeFormat("en-US", { timeZone: LEAGUE_TZ, timeZoneName: "longOffset" })
-    .formatToParts(guess)
-    .find((p) => p.type === "timeZoneName")!
-    .value.replace("GMT", "");
-  return new Date(`${date}T${time}:00${offset || "+00:00"}`).toISOString();
+  // Find Eastern's offset at that moment. Check twice so times near a clock change
+  // (early hours on DST days) use the offset in force then, not 4–5 hours earlier.
+  const offsetAt = (d: Date) =>
+    new Intl.DateTimeFormat("en-US", { timeZone: LEAGUE_TZ, timeZoneName: "longOffset" })
+      .formatToParts(d)
+      .find((p) => p.type === "timeZoneName")!
+      .value.replace("GMT", "") || "+00:00";
+  const first = new Date(`${date}T${time}:00${offsetAt(new Date(`${date}T${time}:00Z`))}`);
+  return new Date(`${date}T${time}:00${offsetAt(first)}`).toISOString();
 }
 
 /** ISO → "2026-11-22T15:00" in Eastern time, for a datetime-local input. */

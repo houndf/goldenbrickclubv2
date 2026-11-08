@@ -1,6 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   initialsFor,
@@ -11,6 +12,7 @@ import {
   placeholderEmail,
   usernameProblem,
 } from "@/lib/accounts";
+import { SEASON_TAG } from "@/lib/archiveData";
 import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface FormState {
@@ -88,6 +90,9 @@ export async function joinAction(_prev: FormState, form: FormData): Promise<Form
     console.error("join: claim_invite failed", claimError);
     return { error: "Couldn't create your account. Try again in a minute.", values };
   }
+
+  // The new player (and any 2026 history they reconnected) shows up in the tables now.
+  updateTag(SEASON_TAG);
 
   const supabase = await createSupabaseServerClient();
   const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });

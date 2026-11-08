@@ -3,7 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/player";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabase/server";
 import { easternLocalToIso } from "@/lib/time";
 import { crownOracle } from "@/lib/tournamentCrown";
 import { TOURNAMENTS_TAG } from "@/lib/tournamentData";
@@ -113,8 +113,16 @@ export async function addTieAction(form: FormData): Promise<void> {
 
 export async function removeTieAction(form: FormData): Promise<void> {
   await requireAdmin();
+  const tieId = num(form.get("tieId"));
+  if (!tieId) return;
+  // Never delete a matchup someone has picked (that would delete their picks too).
+  const { count } = await createSupabaseAdminClient()
+    .from("tournament_picks")
+    .select("tie_id", { count: "exact", head: true })
+    .eq("tie_id", tieId);
+  if (count) return;
   const supabase = await createSupabaseServerClient();
-  await supabase.from("tournament_ties").delete().eq("id", num(form.get("tieId")));
+  await supabase.from("tournament_ties").delete().eq("id", tieId);
   refresh();
 }
 

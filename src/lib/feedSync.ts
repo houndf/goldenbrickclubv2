@@ -102,8 +102,8 @@ async function syncAtlanta(db: Db, teamId: Map<string, number>, notes: string[])
       else changed++;
       continue;
     }
-    // A result an admin typed in wins over the feed.
-    if (row.result_source === "admin" && row.status === "final" && m.status === "final") {
+    // A result an admin typed in wins over the feed (even a feed that hasn't caught up yet).
+    if (row.result_source === "admin" && row.status === "final") {
       const { error } = await db.from("matches").update({ kickoff_at: m.kickoff }).eq("id", m.id);
       if (error) notes.push(`match ${m.id}: ${error.message}`);
       continue;
@@ -211,7 +211,8 @@ async function syncTournaments(db: Db, teamId: Map<string, number>, notes: strin
             name: r.name,
             points: r.number,
             is_final: i === t.rounds.length - 1,
-            locks_at: kickoffs[0] ?? null,
+            // Only when the feed knows; don't wipe a start time an admin set.
+            ...(kickoffs[0] ? { locks_at: kickoffs[0] } : {}),
           },
           { onConflict: "tournament_id,number" },
         )
@@ -239,14 +240,16 @@ async function syncTournaments(db: Db, teamId: Map<string, number>, notes: strin
       const hasPicks = new Set((pickRows ?? []).map((p) => p.tie_id as number));
 
       for (const [slot, tie] of r.ties.entries()) {
+        // Kickoff, winner and goals only overwrite when the feed has them, so a blank
+        // in the feed never erases something an admin entered by hand.
         const fields = {
           slot: slot + 1,
           label: tie.label,
           seed_a: tie.seedA,
           seed_b: tie.seedB,
-          winner: tie.winner === "a" ? "home" : tie.winner === "b" ? "away" : null,
-          total_goals: tie.totalGoals,
-          first_kickoff: tie.firstKickoff,
+          ...(tie.winner ? { winner: tie.winner === "a" ? "home" : "away" } : {}),
+          ...(tie.totalGoals != null ? { total_goals: tie.totalGoals } : {}),
+          ...(tie.firstKickoff ? { first_kickoff: tie.firstKickoff } : {}),
         };
         const id = byKey.get(tie.key);
         if (id === undefined) {

@@ -84,7 +84,7 @@ export default async function TablePage() {
                 )}
                 {player.extraGold && s.spoon && (
                   <span>
-                    <span className={ui.tag} style={{ background: "var(--red)", color: "var(--cream)" }}>
+                    <span className={`${ui.tag} ${ui.woodTag}`}>
                       WOODEN SPOON
                     </span>{" "}
                     {nameOf(s.spoon.profileId, s.spoon.name)} ({s.spoon.points})

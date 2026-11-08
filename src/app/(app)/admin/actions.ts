@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { temporaryPassword } from "@/lib/accounts";
+import { SEASON_TAG } from "@/lib/archiveData";
 import { requireAdmin } from "@/lib/player";
 import { SETTINGS_TAG } from "@/lib/settings";
 import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabase/server";
@@ -53,7 +54,7 @@ export async function revokeInviteAction(form: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   await supabase
     .from("invite_codes")
-    .update({ revoked_at: new Date().toISOString() })
+    .update({ revoked_at: new Date().toISOString(), legacy_player_id: null })
     .eq("code", code)
     .is("used_at", null);
   revalidatePath("/admin");
@@ -89,7 +90,9 @@ export async function setExtraGoldAction(form: FormData): Promise<void> {
   const extraGold = form.get("extraGold") === "true";
   const supabase = await createSupabaseServerClient();
   await supabase.from("profiles").update({ extra_gold: extraGold }).eq("id", playerId);
-  revalidatePath("/admin");
+  // Gold-only tables are built from cached season data; refresh it.
+  updateTag(SEASON_TAG);
+  revalidatePath("/", "layout");
 }
 
 export async function setResultsHiddenAction(form: FormData): Promise<void> {
