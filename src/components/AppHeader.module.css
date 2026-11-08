@@ -1,0 +1,61 @@
+.header {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: max(16px, env(safe-area-inset-top)) 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brickStatic {
+  display: inline-flex;
+}
+
+.brickButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 2px 10px 2px 2px;
+  background: none;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.brickButton:disabled {
+  cursor: progress;
+}
+
+.brickGold,
+.brickSilver {
+  display: inline-flex;
+  transition: transform 180ms ease;
+}
+
+.brickGold {
+  transform: rotate(-6deg);
+}
+
+.brickSilver {
+  transform: rotate(0deg);
+}
+
+.brickButton:active .brickGold,
+.brickButton:active .brickSilver {
+  transform: scale(0.92);
+}
+
+.brickLabel {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.avatarLink {
+  text-decoration: none;
+  border-radius: 50%;
+  box-shadow: var(--drop-sm);
+}

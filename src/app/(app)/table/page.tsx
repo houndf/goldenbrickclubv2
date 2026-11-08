@@ -1,13 +1,16 @@
 import { StandingsList } from "@/components/StandingsList";
 import { getLegacySeason } from "@/lib/archiveData";
 import { requirePlayer } from "@/lib/player";
+import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
 
 export const instant = false;
 export const metadata = { title: "Table · Golden Brick Club" };
 
 export default async function TablePage() {
-  const [player, season] = await Promise.all([requirePlayer(), getLegacySeason(2026)]);
+  const player = await requirePlayer();
+  const goldOnly = await isGoldView(player);
+  const season = await getLegacySeason(2026, { goldOnly });
 
   if (!season) {
     return (
@@ -25,7 +28,9 @@ export default async function TablePage() {
     <main className={ui.screen}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
         <h1 className={ui.screenTitle}>TABLE</h1>
-        <span className={ui.stamp} style={{ fontSize: 15 }}>2026 · FINAL</span>
+        <span className={ui.stamp} style={{ fontSize: 15, background: goldOnly ? "var(--gold)" : undefined }}>
+          {goldOnly ? "2026 · GOLD ONLY" : "2026 · FINAL"}
+        </span>
       </div>
 
       <section className={ui.panel} aria-labelledby="season-heading">

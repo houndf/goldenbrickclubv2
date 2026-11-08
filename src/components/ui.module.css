@@ -323,3 +323,8 @@
   color: var(--ink);
   margin-right: 4px;
 }
+
+/* Inside the signed-in app the header already clears the status bar. */
+.appBody .screen {
+  padding-top: 16px;
+}

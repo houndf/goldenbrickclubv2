@@ -1,6 +1,7 @@
 import { Avatar } from "@/components/Avatar";
 import { getLegacySeason } from "@/lib/archiveData";
 import { requirePlayer } from "@/lib/player";
+import { isGoldView } from "@/lib/view";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
 
@@ -9,19 +10,23 @@ export const metadata = { title: "Friends · Golden Brick Club" };
 
 export default async function FriendsPage() {
   const me = await requirePlayer();
+  const goldOnly = await isGoldView(me);
   const supabase = await createSupabaseServerClient();
   const [{ data: profiles }, season] = await Promise.all([
     supabase.from("profiles").select("id, username, initials, avatar_color, role, extra_gold").order("username"),
-    getLegacySeason(2026),
+    getLegacySeason(2026, { goldOnly }),
   ]);
+  const members = (profiles ?? []).filter((p) => !goldOnly || p.extra_gold);
   const finish = new Map((season?.standings ?? []).filter((r) => r.profileId).map((r) => [r.profileId!, r]));
 
   return (
     <main className={ui.screen}>
-      <h1 className={ui.screenTitle}>THE CLUB</h1>
-      <p className={ui.lead}>{profiles?.length ?? 0} members</p>
+      <h1 className={ui.screenTitle}>{goldOnly ? "GOLD CLUB" : "THE CLUB"}</h1>
+      <p className={ui.lead}>
+        {members.length} {goldOnly ? "Extra Gold members · tap the brick to see everyone" : "members"}
+      </p>
       <ul className={ui.list}>
-        {(profiles ?? []).map((p) => {
+        {members.map((p) => {
           const f = finish.get(p.id);
           return (
             <li key={p.id} className={ui.row} style={p.id === me.id ? { background: "var(--teal)", color: "var(--ink)" } : undefined}>

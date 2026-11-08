@@ -17,6 +17,15 @@ export interface PlayerLook {
   username: string;
   initials: string;
   color: string;
+  extraGold: boolean;
+}
+
+interface SeasonData {
+  year: number;
+  matches: ArchiveMatch[];
+  players: ArchivePlayer[];
+  picks: ArchivePick[];
+  looks: Record<string, PlayerLook>;
 }
 
 export interface SeasonArchive {
@@ -27,6 +36,7 @@ export interface SeasonArchive {
   matchCount: number;
   /** Current look (avatar) for 2026 players who now have accounts, by profile id. */
   looks: Record<string, PlayerLook>;
+  goldOnly: boolean;
 }
 
 interface MatchRow {
@@ -39,8 +49,8 @@ interface MatchRow {
   away: { code: string; name: string } | null;
 }
 
-/** A finished exact-score season (2026), computed from the database. Cached for an hour. */
-export async function getLegacySeason(year: number): Promise<SeasonArchive | null> {
+/** Raw rows for a finished exact-score season (2026). Cached for an hour. */
+async function getLegacySeasonData(year: number): Promise<SeasonData | null> {
   "use cache";
   cacheLife("hours");
 
@@ -56,10 +66,10 @@ export async function getLegacySeason(year: number): Promise<SeasonArchive | nul
       .eq("season_id", year)
       .eq("status", "final"),
     supabase.from("legacy_players").select("id, name, profile_id"),
-    supabase.from("profiles").select("id, username, initials, avatar_color"),
+    supabase.from("profiles").select("id, username, initials, avatar_color, extra_gold"),
   ]);
   if (matchesRes.error || playersRes.error) {
-    console.error("getLegacySeason failed", matchesRes.error ?? playersRes.error);
+    console.error("getLegacySeasonData failed", matchesRes.error ?? playersRes.error);
     return null;
   }
 
@@ -82,33 +92,51 @@ export async function getLegacySeason(year: number): Promise<SeasonArchive | nul
       matches.map((m) => m.id),
     );
   if (picksRes.error) {
-    console.error("getLegacySeason picks failed", picksRes.error);
+    console.error("getLegacySeasonData picks failed", picksRes.error);
     return null;
   }
 
-  const players: ArchivePlayer[] = (playersRes.data ?? []).map((p) => ({
-    id: p.id,
-    name: p.name,
-    profileId: p.profile_id,
-  }));
-  const picks: ArchivePick[] = (picksRes.data ?? []).map((p) => ({
-    matchId: p.match_id,
-    playerId: p.legacy_player_id,
-    predHome: p.pred_home,
-    predAway: p.pred_away,
-  }));
-
   const looks: Record<string, PlayerLook> = {};
   for (const p of profilesRes.data ?? []) {
-    looks[p.id] = { username: p.username, initials: p.initials, color: p.avatar_color };
+    looks[p.id] = { username: p.username, initials: p.initials, color: p.avatar_color, extraGold: p.extra_gold };
   }
 
   return {
     year,
-    standings: legacyStandings(matches, players, picks),
-    segments: legacySegments(matches, players, picks),
-    club: clubRecord(matches, "ATL"),
-    matchCount: matches.length,
+    matches,
+    players: (playersRes.data ?? []).map((p) => ({ id: p.id, name: p.name, profileId: p.profile_id })),
+    picks: (picksRes.data ?? []).map((p) => ({
+      matchId: p.match_id,
+      playerId: p.legacy_player_id,
+      predHome: p.pred_home,
+      predAway: p.pred_away,
+    })),
     looks,
+  };
+}
+
+/**
+ * Standings, segment trophies and Atlanta's record for a past season.
+ * With goldOnly, only Extra Gold members are ranked (as if no one else played).
+ */
+export async function getLegacySeason(
+  year: number,
+  { goldOnly = false }: { goldOnly?: boolean } = {},
+): Promise<SeasonArchive | null> {
+  const data = await getLegacySeasonData(year);
+  if (!data) return null;
+
+  const players = goldOnly
+    ? data.players.filter((p) => p.profileId && data.looks[p.profileId]?.extraGold)
+    : data.players;
+
+  return {
+    year,
+    standings: legacyStandings(data.matches, players, data.picks),
+    segments: legacySegments(data.matches, players, data.picks),
+    club: clubRecord(data.matches, "ATL"),
+    matchCount: data.matches.length,
+    looks: data.looks,
+    goldOnly,
   };
 }

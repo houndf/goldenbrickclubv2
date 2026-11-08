@@ -1,5 +1,4 @@
 import { headers } from "next/headers";
-import { BackButton } from "@/components/BackButton";
 import { requireAdmin } from "@/lib/player";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
@@ -58,7 +57,6 @@ export default async function AdminPage() {
   return (
     <main className={`${ui.screen} ${ui.wide}`}>
       <div className={ui.topBar}>
-        <BackButton href="/home" label="Back to home" />
         <h1 className={ui.screenTitle}>ADMIN PORTAL</h1>
       </div>
 
