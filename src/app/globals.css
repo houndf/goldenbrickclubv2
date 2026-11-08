@@ -1,0 +1,112 @@
+/*
+ * Golden Brick Club 2.0 — "Matchday Game Show" design tokens.
+ * Dark is the default; light follows the system setting unless the
+ * person picks a theme (data-theme on <html>).
+ */
+
+:root {
+  /* Fixed brand colors (same in both themes) */
+  --ink: #0b0810;
+  --gold: #f5c230;
+  --gold-hover: #ffd95c;
+  --red: #d7263d;
+  --red-soft-text: #ffe3a3;
+  --cream: #fff4dc;
+  --teal: #3dd6c4;
+  --orange: #f58a5c;
+  --purple: #8c7cf0;
+  --blue: #5ba8f5;
+
+  /* Theme colors — dark */
+  --bg: #1b1426;
+  --panel: #2a2038;
+  --panel-sunken: #241b30;
+  --line: #3a2e4c;
+  --text: #fff4dc;
+  --muted: #b9aecb;
+  --accent: #f5c230;
+  --good: #3dd6c4;
+  --bad: #ff6b78;
+
+  /* Shape */
+  --outline: 3px solid var(--ink);
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 22px;
+  --drop-sm: 0 4px 0 var(--ink);
+  --drop-md: 0 6px 0 var(--ink);
+  --drop-lg: 0 8px 0 var(--ink);
+
+  /* Type */
+  --font-display: "Lilita One", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #fff1d6;
+    --panel: #ffffff;
+    --panel-sunken: #f3e6c8;
+    --line: #ede2cb;
+    --text: #1b1426;
+    --muted: #5e5470;
+    --accent: #c41e32;
+    --good: #0e7a6e;
+    --bad: #c41e32;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --bg: #fff1d6;
+  --panel: #ffffff;
+  --panel-sunken: #f3e6c8;
+  --line: #ede2cb;
+  --text: #1b1426;
+  --muted: #5e5470;
+  --accent: #c41e32;
+  --good: #0e7a6e;
+  --bad: #c41e32;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 800;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: var(--accent);
+}
+
+button {
+  font: inherit;
+}
+
+/* Keyboard focus that reads on every surface */
+:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
