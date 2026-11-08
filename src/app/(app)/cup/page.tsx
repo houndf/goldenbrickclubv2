@@ -11,6 +11,7 @@ import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
 import styles from "./cup.module.css";
 import { BracketView, type CrowdPerson, type MyPick } from "./BracketView";
+import { CupHelp } from "./CupHelp";
 
 export const instant = false;
 export const metadata = { title: "Cup · Golden Brick Club" };
@@ -159,11 +160,39 @@ function TournamentView({
       <section className={`${styles.hero} ${ui.span}`}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
           <span className={styles.heroKicker}>LIVE NOW</span>
-          {nextLock && (
-            <span style={{ background: "var(--ink)", color: "var(--gold)", borderRadius: "0.5rem", padding: "2px 8px", fontSize: "0.6875rem", fontWeight: 900 }}>
-              NEXT LOCK IN {timeUntil(nextLock, now).toUpperCase()}
-            </span>
-          )}
+          <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            {nextLock && (
+              <span style={{ background: "var(--ink)", color: "var(--gold)", borderRadius: "0.5rem", padding: "2px 8px", fontSize: "0.6875rem", fontWeight: 900 }}>
+                NEXT LOCK IN {timeUntil(nextLock, now).toUpperCase()}
+              </span>
+            )}
+            <CupHelp>
+              <ul className={styles.helpList}>
+                <li>
+                  <strong>Pick who goes through</strong> each matchup. Tap a glowing card on the bracket.
+                </li>
+                <li>
+                  <strong>Right pick = the round&apos;s points:</strong>{" "}
+                  {rounds.map((r) => `${r.name} ${r.points}`).join(" · ")}.
+                </li>
+                <li>
+                  <strong>Wrong or missed = 0.</strong> You can never lose points.
+                </li>
+                <li>
+                  <strong>Locks 1 hour before kickoff.</strong> Change your pick as often as you like until then.
+                </li>
+                <li>
+                  <strong>Everyone&apos;s picks show</strong> once a matchup locks.
+                </li>
+                <li>
+                  <strong>Tie-breaker:</strong> guess the total goals in the final (extra time counts, shootouts don&apos;t). Closest wins.
+                </li>
+                <li>
+                  <strong>Most points wins</strong> the {meta.trophyName} and a 🔮 badge.
+                </li>
+              </ul>
+            </CupHelp>
+          </span>
         </div>
         <h2 className={styles.heroTitle}>{meta.name.toUpperCase()}</h2>
         <p style={{ margin: 0, fontSize: "0.8125rem", fontWeight: 800, color: "var(--red-soft-text)" }}>
@@ -177,18 +206,22 @@ function TournamentView({
         )}
       </section>
 
-      <section className={`${ui.panel} ${ui.span}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
-        <BracketView rounds={rounds} ties={ties} topSeeds={topSeeds} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
-      </section>
-
       {showAdminBanner && <HiddenResultsBanner />}
       {hideResults ? (
-        <HiddenResultsCard />
+        <div className={ui.span}>
+          <HiddenResultsCard />
+        </div>
       ) : (
-        <section className={ui.panel} aria-labelledby="oracle-race">
-          <h2 id="oracle-race" className={ui.sectionTitle}>
-            Oracle race {goldOnly ? "· gold only" : ""}
-          </h2>
+        <details className={`${ui.panel} ${ui.collapsible} ${ui.span}`} open>
+          <summary className={ui.collapsibleSummary}>
+            <h2 className={ui.sectionTitle}>Oracle race</h2>
+            <span className={ui.muted} style={{ fontSize: "0.8125rem" }}>
+              {anyScored && leader ? `${people.get(leader.playerId)?.username} leads` : `${standings.length} players`}
+            </span>
+            <svg className={ui.chevron} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </summary>
           {anyScored && leader ? (
             <p className={ui.lead} style={{ fontSize: "0.875rem" }}>
               Current {meta.trophyName}: <strong style={{ color: "var(--text)" }}>{people.get(leader.playerId)?.username}</strong> ·{" "}
@@ -241,8 +274,13 @@ function TournamentView({
               );
             })}
           </ol>
-        </section>
+        </details>
       )}
+
+      <section className={`${ui.panel} ${ui.span}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
+        <BracketView rounds={rounds} ties={ties} topSeeds={topSeeds} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
+      </section>
+
     </>
   );
 }
