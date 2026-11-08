@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { buildBracket, type BracketNode, type Conference, type Orientation } from "@/lib/bracket";
 import { tieLockAt, tieState, type Side, type TieState, type TRound, type TTeam, type TTie } from "@/lib/tournament";
@@ -23,35 +23,6 @@ export interface CrowdPerson {
 const READABLE: Record<Orientation, number> = { horizontal: 0.75, vertical: 0.55 };
 const MAX_SCALE = 1.4;
 
-// Which way round the bracket is drawn: the viewer's last choice, else vertical on phones.
-const ORIENT_KEY = "gbc.bracket.orientation";
-const ORIENT_EVENT = "gbc-bracket-orientation";
-const WIDE = "(min-width: 760px)";
-function subscribeOrientation(cb: () => void) {
-  const mq = window.matchMedia(WIDE);
-  window.addEventListener(ORIENT_EVENT, cb);
-  window.addEventListener("storage", cb);
-  mq.addEventListener("change", cb);
-  return () => {
-    window.removeEventListener(ORIENT_EVENT, cb);
-    window.removeEventListener("storage", cb);
-    mq.removeEventListener("change", cb);
-  };
-}
-function readOrientation(): Orientation {
-  try {
-    const saved = window.localStorage.getItem(ORIENT_KEY);
-    if (saved === "horizontal" || saved === "vertical") return saved;
-  } catch {}
-  return window.matchMedia(WIDE).matches ? "horizontal" : "vertical";
-}
-function saveOrientation(o: Orientation) {
-  try {
-    window.localStorage.setItem(ORIENT_KEY, o);
-  } catch {}
-  window.dispatchEvent(new Event(ORIENT_EVENT));
-}
-
 export function BracketView({
   rounds,
   ties,
@@ -68,7 +39,8 @@ export function BracketView({
   nowIso: string;
 }) {
   const router = useRouter();
-  const orientation = useSyncExternalStore(subscribeOrientation, readOrientation, () => "vertical" as const);
+  // Always opens upright; the rotate button turns it sideways for this visit.
+  const [orientation, setOrientation] = useState<Orientation>("vertical");
   const layout = useMemo(() => buildBracket(rounds, ties, { topSeeds, orientation }), [rounds, ties, topSeeds, orientation]);
   const { cardW, cardH } = layout;
   const viewport = useRef<HTMLDivElement>(null);
@@ -255,7 +227,7 @@ export function BracketView({
             type="button"
             aria-label={vertical ? "Turn the bracket sideways" : "Turn the bracket upright"}
             title={vertical ? "Turn sideways" : "Turn upright"}
-            onClick={() => saveOrientation(vertical ? "horizontal" : "vertical")}
+            onClick={() => setOrientation(vertical ? "horizontal" : "vertical")}
           >
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className={vertical ? undefined : styles.rotated}>
               <rect x="7" y="3" width="10" height="18" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2.4" />
