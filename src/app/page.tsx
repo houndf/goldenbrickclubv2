@@ -76,7 +76,7 @@ export default function WelcomePage() {
           LOG IN
         </Link>
         <p className={styles.joinLine}>
-          New here? <Link href="/login">Join the club</Link>
+          Got an invite? <Link href="/join">Join the club</Link>
         </p>
       </footer>
     </main>

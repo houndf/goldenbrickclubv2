@@ -92,10 +92,15 @@ async function main() {
     return ws;
   };
 
-  // Users: names only — the passcode column is deliberately ignored.
-  const playerNames = rowsOf(sheet("users"))
-    .map((r) => r.user_name)
-    .filter(Boolean);
+  // Users: name, role and Extra Gold only — the passcode column is never read.
+  const users = rowsOf(sheet("users"))
+    .filter((r) => r.user_name)
+    .map((r) => ({
+      name: r.user_name,
+      admin: r.user_type?.toLowerCase() === "admin",
+      extraGold: ["1", "true", "yes"].includes((r.extra_gold_status ?? "").toLowerCase()),
+    }));
+  const playerNames = users.map((u) => u.name);
 
   // Results: keep finished rows; one per match.
   const results = new Map<string, { home: number; away: number }>();
@@ -173,8 +178,8 @@ async function main() {
     );
   }
   lines.push(
-    `insert into public.legacy_players (name) values ${playerNames
-      .map((n) => `(${sql(n)})`)
+    `insert into public.legacy_players (name, extra_gold, was_admin) values ${users
+      .map((u) => `(${sql(u.name)}, ${u.extraGold}, ${u.admin})`)
       .join(", ")} on conflict (name) do nothing;`,
   );
   for (const p of picks) {
@@ -183,7 +188,19 @@ async function main() {
         `${sql(p.match)}, (select id from public.legacy_players where name = ${sql(p.player)}), ${p.home}, ${p.away}, ${sql(p.at)}) on conflict do nothing;`,
     );
   }
+  // One invite per 2026 player, carrying their history, Extra Gold and admin role.
+  lines.push(
+    "insert into public.invite_codes (note, legacy_player_id, grants_admin, grants_extra_gold)",
+    "select lp.name, lp.id, lp.was_admin, lp.extra_gold from public.legacy_players lp",
+    "where not exists (select 1 from public.invite_codes ic where ic.legacy_player_id = lp.id);",
+  );
   lines.push("commit;", "");
+  lines.push("-- Invite codes to hand out:");
+  lines.push(
+    "select ic.note as player, ic.code, ic.grants_admin as admin, ic.grants_extra_gold as extra_gold",
+    "from public.invite_codes ic where ic.used_at is null order by ic.grants_admin desc, ic.note;",
+    "",
+  );
   writeFileSync(outPath, lines.join("\n"));
 
   // ---- Verification report (old exact-score rules) --------------------------

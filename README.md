@@ -14,8 +14,10 @@ Milestone 1 (foundation) in progress.
 - [x] Scoring engine for the 2027 pick system, with tests
 - [x] Database schema with row-level security
 - [x] 2026 history import (old exact-score system)
+- [x] Invite-only accounts: username + password, no email
+- [x] Login, logout, change password
+- [x] Admin portal: invite codes, password resets, admin / Extra Gold
 - [ ] Supabase project connected
-- [ ] Login (method TBD)
 - [ ] Vercel deployment
 
 ## Scoring (2027+)
@@ -27,6 +29,35 @@ Milestone 1 (foundation) in progress.
 | First goal (optional, independent of the result) | +1 | −1 (void if 0–0) |
 
 Tie-breaker: most margin bets won. Values live in `src/lib/scoring/rules.ts`.
+
+## Setup
+
+1. **Database:** in the Supabase SQL editor, run each file in `supabase/migrations/` in order.
+2. **2026 history + invites:** run `npm run import:2026 -- <xlsx>` and paste the generated
+   `supabase/seed/2026.local.sql` into the SQL editor. It ends by listing one invite code per
+   2026 player (with their old admin / Extra Gold status).
+3. **Supabase Auth settings:** turn **off** "Allow new users to sign up" (Authentication → Sign In / Providers).
+   Accounts are only created through invite codes by the server.
+4. **Vercel environment variables** (Settings → Environment Variables), then redeploy:
+
+   | Name | Where to find it |
+   |---|---|
+   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Connect (Project URL) |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Settings → API Keys → publishable key |
+   | `SUPABASE_SECRET_KEY` | Supabase → Settings → API Keys → secret key (**server only, never share**) |
+
+   Optional: `PLAYER_EMAIL_DOMAIN` — the domain used for players' hidden placeholder email
+   addresses (default `players.goldenbrickclub.invalid`). Players never see or use it.
+
+## Accounts
+
+- Invite-only: the commissioner makes one-use codes in `/admin` and sends players a
+  `/join?code=…` link. A code can be linked to a 2026 player to reconnect their history.
+- Players log in with username + password. Usernames are case-insensitive.
+- No email: Supabase needs one internally, so each account gets a private placeholder
+  address that never receives mail.
+- Forgot password → the commissioner resets it in `/admin` and gets a temporary
+  password to send privately; the player changes it in their profile.
 
 ## Development
 
