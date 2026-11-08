@@ -1,5 +1,5 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import {
   clubRecord,
   legacySegments,
@@ -12,6 +12,8 @@ import {
   type StandingRow,
 } from "./archive";
 import { createSupabasePublicClient } from "./supabase/public";
+
+export const SEASON_TAG = "season-results";
 
 export interface PlayerLook {
   username: string;
@@ -52,6 +54,7 @@ interface MatchRow {
 /** Raw rows for a finished exact-score season (2026). Cached for an hour. */
 async function getLegacySeasonData(year: number): Promise<SeasonData | null> {
   "use cache";
+  cacheTag(SEASON_TAG);
   cacheLife("hours");
 
   const supabase = createSupabasePublicClient();

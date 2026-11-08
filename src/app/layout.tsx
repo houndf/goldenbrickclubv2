@@ -4,6 +4,7 @@ import "@fontsource/nunito/700.css";
 import "@fontsource/nunito/800.css";
 import "@fontsource/nunito/900.css";
 import "./globals.css";
+import { FeedPing } from "@/components/FeedPing";
 
 export const metadata: Metadata = {
   title: "Golden Brick Club",
@@ -28,7 +29,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <FeedPing />
+      </body>
     </html>
   );
 }
