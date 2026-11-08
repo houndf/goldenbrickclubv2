@@ -1,25 +1,28 @@
 import type { TRound, TTeam, TTie } from "./tournament";
 
 /**
- * Lays out a tournament as a bracket picture.
+ * Lays out a tournament as a bracket picture, either way round.
  *
- * MLS-style (ties labelled EAST / WEST): East on the left, West on the right,
+ * MLS-style (ties labelled EAST / WEST): East on one end, West on the other,
  * the final in the middle. Round One sits in seed order [1v8/9, 4v5, 2v7, 3v6],
  * so winners meet the way the real bracket does; the Wild Card hangs off the
  * 1-seed's matchup. Missing matchups are drawn as placeholders so the shape is
  * always complete.
  *
- * Anything else falls back to plain left-to-right columns, one per round.
+ * - horizontal: rounds are columns; East left, West right.
+ * - vertical (phones): rounds are rows; East on top, West at the bottom.
+ *
+ * Anything else falls back to plain rounds in order, one column/row each.
  */
 
-export const CARD_W = 148;
-export const CARD_H = 72;
-const COL_GAP = 30;
-const ROW_GAP = 18;
-const HEAD = 40;
-const PAD = 16;
-
+export type Orientation = "horizontal" | "vertical";
 export type Conference = "EAST" | "WEST";
+
+const SIZES = {
+  horizontal: { cardW: 148, cardH: 72, slotGap: 18, stageGap: 30, head: 40 },
+  vertical: { cardW: 120, cardH: 72, slotGap: 10, stageGap: 14, head: 26 },
+} as const;
+const PAD = 16;
 
 export interface BracketSlotTeam {
   code: string;
@@ -44,38 +47,50 @@ export interface BracketEdge {
   to: string;
 }
 
-export interface BracketColumn {
+/** A round's label: above its column (horizontal) or above its row (vertical). */
+export interface BracketBand {
   x: number;
+  y: number;
+  width: number;
+  height: number;
   round: TRound;
   side: Conference | null;
 }
 
 export interface BracketLayout {
+  orientation: Orientation;
   width: number;
   height: number;
+  cardW: number;
+  cardH: number;
   nodes: BracketNode[];
   edges: BracketEdge[];
-  columns: BracketColumn[];
+  bands: BracketBand[];
 }
 
-const colX = (i: number) => PAD + i * (CARD_W + COL_GAP);
-const rowY = (i: number) => HEAD + PAD + i * (CARD_H + ROW_GAP);
-const between = (a: number, b: number) => (a + b) / 2;
+/** Position before projecting: `stage` = which column/row, `slot` = where along it (0..slots-1, may be fractional). */
+interface Abstract {
+  key: string;
+  stage: number;
+  slot: number;
+  round: TRound;
+  side: Conference | null;
+  tie: TTie | null;
+  placeholder: BracketNode["placeholder"];
+}
 
 const sideOf = (tie: TTie): Conference | null =>
   tie.label?.toUpperCase().startsWith("E") ? "EAST" : tie.label?.toUpperCase().startsWith("W") ? "WEST" : null;
 
 const winnerOf = (tie: TTie | null | undefined): BracketSlotTeam | null => {
   if (!tie?.winner) return null;
-  return tie.winner === "home"
-    ? { ...tie.teamA, seed: tie.seedA }
-    : { ...tie.teamB, seed: tie.seedB };
+  return tie.winner === "home" ? { ...tie.teamA, seed: tie.seedA } : { ...tie.teamB, seed: tie.seedB };
 };
 
 const hasTeam = (tie: TTie | null | undefined, code: string) =>
   Boolean(tie && (tie.teamA.code === code || tie.teamB.code === code));
 
-/** Round One slot (0-3, top to bottom) from the seeds: 1v8, 4v5, 2v7, 3v6. */
+/** Round One slot (0-3) from the seeds: 1v8, 4v5, 2v7, 3v6. */
 export function roundOneSlot(tie: TTie): number | null {
   const seeds = [tie.seedA, tie.seedB].filter((s): s is number => s != null);
   if (seeds.length === 0) return null;
@@ -111,54 +126,93 @@ export function isConferenceBracket(rounds: TRound[], ties: TTie[]): boolean {
 export function buildBracket(
   rounds: TRound[],
   ties: TTie[],
-  opts: { topSeeds?: Partial<Record<Conference, TTeam>> } = {},
+  opts: { topSeeds?: Partial<Record<Conference, TTeam>>; orientation?: Orientation } = {},
 ): BracketLayout {
   const sorted = [...rounds].sort((a, b) => a.number - b.number);
-  return isConferenceBracket(sorted, ties) ? conferenceBracket(sorted, ties, opts.topSeeds ?? {}) : simpleBracket(sorted, ties);
+  const shape = isConferenceBracket(sorted, ties)
+    ? conferenceBracket(sorted, ties, opts.topSeeds ?? {})
+    : simpleBracket(sorted, ties);
+  return project(shape, opts.orientation ?? "horizontal");
 }
 
-function conferenceBracket(
-  rounds: TRound[],
-  ties: TTie[],
-  topSeeds: Partial<Record<Conference, TTeam>>,
-): BracketLayout {
+interface Shape {
+  stages: { round: TRound; side: Conference | null }[];
+  slots: number;
+  nodes: Abstract[];
+  edges: BracketEdge[];
+}
+
+function project(shape: Shape, orientation: Orientation): BracketLayout {
+  const s = SIZES[orientation];
+  const horizontal = orientation === "horizontal";
+  // Along a stage, slots are spaced by the card's size in that direction.
+  const slotStride = (horizontal ? s.cardH : s.cardW) + s.slotGap;
+  const stageStride = (horizontal ? s.cardW : s.cardH + s.head) + s.stageGap;
+  const stagePos = (stage: number) => PAD + stage * stageStride + (horizontal ? 0 : s.head);
+  const slotPos = (slot: number) => PAD + (horizontal ? s.head : 0) + slot * slotStride;
+  const along = PAD * 2 + (horizontal ? s.head : 0) + (shape.slots - 1) * slotStride + (horizontal ? s.cardH : s.cardW);
+  const across = stagePos(shape.stages.length - 1) + (horizontal ? s.cardW : s.cardH) + PAD;
+
+  const nodes: BracketNode[] = shape.nodes.map((n) => ({
+    key: n.key,
+    x: horizontal ? stagePos(n.stage) : slotPos(n.slot),
+    y: horizontal ? slotPos(n.slot) : stagePos(n.stage),
+    round: n.round,
+    side: n.side,
+    tie: n.tie,
+    placeholder: n.placeholder,
+  }));
+  const bands: BracketBand[] = shape.stages.map((st, i) =>
+    horizontal
+      ? { x: stagePos(i), y: 8, width: s.cardW, height: s.head - 8, round: st.round, side: st.side }
+      : { x: PAD, y: stagePos(i) - s.head, width: along - PAD * 2, height: s.head - 4, round: st.round, side: st.side },
+  );
+  return {
+    orientation,
+    width: horizontal ? across : along,
+    height: horizontal ? along : across,
+    cardW: s.cardW,
+    cardH: s.cardH,
+    nodes,
+    edges: shape.edges,
+    bands,
+  };
+}
+
+function conferenceBracket(rounds: TRound[], ties: TTie[], topSeeds: Partial<Record<Conference, TTeam>>): Shape {
   const hasWildCard = rounds.length === 5;
   const wc: TRound | null = hasWildCard ? rounds[0] : null;
   const [r1, sf, cf, fin] = hasWildCard ? rounds.slice(1) : rounds;
   const of = (r: TRound | null, side: Conference | null) =>
     r ? ties.filter((t) => t.roundId === r.id && (side === null || sideOf(t) === side)).sort((a, b) => a.slot - b.slot) : [];
 
-  // Columns, left to right: [WC] R1 SF CF  FINAL  CF SF R1 [WC]
-  const sideCols = hasWildCard ? 4 : 3;
-  const roundsBySide = [wc, r1, sf, cf].filter((r): r is TRound => r !== null);
-  const finalCol = sideCols;
-  const colFor = (side: Conference, depth: number) =>
-    side === "EAST" ? depth : finalCol * 2 - depth; // depth 0 = outermost
+  // Stages from one end to the other: [WC] R1 SF CF  FINAL  CF SF R1 [WC]
+  const perSide = [wc, r1, sf, cf].filter((r): r is TRound => r !== null);
+  const finalStage = perSide.length;
+  const stageFor = (side: Conference, depth: number) => (side === "EAST" ? depth : finalStage * 2 - depth);
+  const stages: Shape["stages"] = [
+    ...perSide.map((round) => ({ round, side: "EAST" as const })),
+    { round: fin, side: null },
+    ...[...perSide].reverse().map((round) => ({ round, side: "WEST" as const })),
+  ];
 
-  const nodes: BracketNode[] = [];
+  const nodes: Abstract[] = [];
   const edges: BracketEdge[] = [];
-  const columns: BracketColumn[] = [];
-  const ys = { r1: [0, 1, 2, 3].map(rowY) };
-  const sfY = [between(ys.r1[0], ys.r1[1]), between(ys.r1[2], ys.r1[3])];
-  const cfY = between(sfY[0], sfY[1]);
-
-  const cfNodes: Partial<Record<Conference, string>> = {};
   const cfTies: Partial<Record<Conference, TTie | null>> = {};
+  const cfKeys: Partial<Record<Conference, string>> = {};
 
   for (const side of ["EAST", "WEST"] as const) {
     let depth = 0;
     const short = side === "EAST" ? "E" : "W";
-    for (const r of roundsBySide) columns.push({ x: colX(colFor(side, roundsBySide.indexOf(r))), round: r, side });
 
-    // Wild Card: one matchup feeding the 1-seed's slot.
     const wcTie = of(wc, side)[0] ?? null;
     let wcKey: string | null = null;
     if (wc) {
       wcKey = `${short}-wc`;
       nodes.push({
         key: wcKey,
-        x: colX(colFor(side, depth)),
-        y: ys.r1[0],
+        stage: stageFor(side, depth),
+        slot: 0,
         round: wc,
         side,
         tie: wcTie,
@@ -167,18 +221,17 @@ function conferenceBracket(
       depth++;
     }
 
-    // Round One in seed order.
     const r1Slots = place(of(r1, side), 4, roundOneSlot);
+    const pairs: [number, number][] = [
+      [1, 8],
+      [4, 5],
+      [2, 7],
+      [3, 6],
+    ];
     const r1Keys = r1Slots.map((tie, i) => {
       const key = `${short}-r1-${i}`;
       let placeholder: BracketNode["placeholder"] = null;
       if (!tie) {
-        const pairs: [number, number][] = [
-          [1, 8],
-          [4, 5],
-          [2, 7],
-          [3, 6],
-        ];
         const [hi, lo] = pairs[i];
         const top = hi === 1 ? topSeeds[side] : undefined;
         placeholder = {
@@ -186,22 +239,21 @@ function conferenceBracket(
           b: i === 0 && wc ? (winnerOf(wcTie) ?? { code: "WC", name: "Wild Card winner", seed: null }) : { code: `#${lo}`, name: `${lo} seed`, seed: lo },
         };
       }
-      nodes.push({ key, x: colX(colFor(side, depth)), y: ys.r1[i], round: r1, side, tie, placeholder });
+      nodes.push({ key, stage: stageFor(side, depth), slot: i, round: r1, side, tie, placeholder });
       return key;
     });
     if (wcKey) edges.push({ from: wcKey, to: r1Keys[0] });
     depth++;
 
-    // Conference semifinals: placed by which Round One matchups their teams came from.
-    const feederPair = (tie: TTie) =>
-      r1Slots.slice(0, 2).some((f) => hasTeam(f, tie.teamA.code) || hasTeam(f, tie.teamB.code)) ? 0 : r1Slots.slice(2).some((f) => hasTeam(f, tie.teamA.code) || hasTeam(f, tie.teamB.code)) ? 1 : null;
-    const sfSlots = place(of(sf, side), 2, feederPair);
+    const fromPair = (tie: TTie, lo: number) =>
+      r1Slots.slice(lo, lo + 2).some((f) => hasTeam(f, tie.teamA.code) || hasTeam(f, tie.teamB.code));
+    const sfSlots = place(of(sf, side), 2, (tie) => (fromPair(tie, 0) ? 0 : fromPair(tie, 2) ? 1 : null));
     const sfKeys = sfSlots.map((tie, i) => {
       const key = `${short}-sf-${i}`;
       nodes.push({
         key,
-        x: colX(colFor(side, depth)),
-        y: sfY[i],
+        stage: stageFor(side, depth),
+        slot: i * 2 + 0.5,
         round: sf,
         side,
         tie,
@@ -212,65 +264,51 @@ function conferenceBracket(
     });
     depth++;
 
-    // Conference final.
     const cfTie = of(cf, side)[0] ?? null;
     const cfKey = `${short}-cf`;
     nodes.push({
       key: cfKey,
-      x: colX(colFor(side, depth)),
-      y: cfY,
+      stage: stageFor(side, depth),
+      slot: 1.5,
       round: cf,
       side,
       tie: cfTie,
       placeholder: cfTie ? null : { a: winnerOf(sfSlots[0]), b: winnerOf(sfSlots[1]) },
     });
     edges.push({ from: sfKeys[0], to: cfKey }, { from: sfKeys[1], to: cfKey });
-    cfNodes[side] = cfKey;
     cfTies[side] = cfTie;
+    cfKeys[side] = cfKey;
   }
 
   const finTie = of(fin, null)[0] ?? null;
-  columns.push({ x: colX(finalCol), round: fin, side: null });
   nodes.push({
     key: "final",
-    x: colX(finalCol),
-    y: cfY,
+    stage: finalStage,
+    slot: 1.5,
     round: fin,
     side: null,
     tie: finTie,
     placeholder: finTie ? null : { a: winnerOf(cfTies.EAST), b: winnerOf(cfTies.WEST) },
   });
-  edges.push({ from: cfNodes.EAST!, to: "final" }, { from: cfNodes.WEST!, to: "final" });
+  edges.push({ from: cfKeys.EAST!, to: "final" }, { from: cfKeys.WEST!, to: "final" });
 
-  return {
-    width: colX(finalCol * 2) + CARD_W + PAD,
-    height: rowY(3) + CARD_H + PAD,
-    nodes,
-    edges,
-    columns,
-  };
+  return { stages, slots: 4, nodes, edges };
 }
 
-/** One column per round, matchups spread evenly; no connectors (we can't know who feeds whom). */
-function simpleBracket(rounds: TRound[], ties: TTie[]): BracketLayout {
+/** One stage per round, matchups spread evenly; no connectors (we can't know who feeds whom). */
+function simpleBracket(rounds: TRound[], ties: TTie[]): Shape {
   const perRound = rounds.map((r) => ties.filter((t) => t.roundId === r.id).sort((a, b) => a.slot - b.slot));
-  const rows = Math.max(1, ...perRound.map((t) => t.length));
-  const height = rowY(rows - 1) + CARD_H + PAD;
-  const nodes: BracketNode[] = [];
-  const columns: BracketColumn[] = [];
-  rounds.forEach((r, ci) => {
-    columns.push({ x: colX(ci), round: r, side: null });
-    const list = perRound[ci];
+  const slots = Math.max(1, ...perRound.map((t) => t.length));
+  const nodes: Abstract[] = [];
+  rounds.forEach((round, stage) => {
+    const list = perRound[stage];
     if (list.length === 0) {
-      nodes.push({ key: `r${r.number}-tbd`, x: colX(ci), y: (HEAD + height - CARD_H) / 2, round: r, side: null, tie: null, placeholder: { a: null, b: null } });
+      nodes.push({ key: `r${round.number}-tbd`, stage, slot: (slots - 1) / 2, round, side: null, tie: null, placeholder: { a: null, b: null } });
       return;
     }
-    const band = (height - HEAD - PAD) / list.length;
     list.forEach((tie, i) => {
-      nodes.push({ key: `t${tie.id}`, x: colX(ci), y: HEAD + band * i + (band - CARD_H) / 2, round: r, side: null, tie, placeholder: null });
+      nodes.push({ key: `t${tie.id}`, stage, slot: ((i + 0.5) * slots) / list.length - 0.5, round, side: null, tie, placeholder: null });
     });
   });
-  return { width: colX(rounds.length - 1) + CARD_W + PAD, height, nodes, edges: [], columns };
+  return { stages: rounds.map((round) => ({ round, side: null })), slots, nodes, edges: [] };
 }
-
-export const HEADER_HEIGHT = HEAD;

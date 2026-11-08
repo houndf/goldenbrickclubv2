@@ -4,7 +4,7 @@ import { requirePlayer } from "@/lib/player";
 import { timeUntil } from "@/lib/time";
 import { getLeagueSettings } from "@/lib/settings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { buildBracket, type Conference } from "@/lib/bracket";
+import type { Conference } from "@/lib/bracket";
 import { tieLockAt, tieState, tournamentStandings, type TTeam } from "@/lib/tournament";
 import { getLiveTournament, getOracleWins, getTournamentDetail, getTournaments } from "@/lib/tournamentData";
 import { isGoldView } from "@/lib/view";
@@ -154,8 +154,6 @@ function TournamentView({
     .map((t) => tieLockAt(t, roundOf.get(t.roundId)!)!)
     .sort()[0];
 
-  const layout = buildBracket(rounds, ties, { topSeeds });
-
   return (
     <>
       <section className={styles.hero}>
@@ -180,7 +178,7 @@ function TournamentView({
       </section>
 
       <section className={ui.panel} aria-label="Bracket" style={{ padding: 12 }}>
-        <BracketView layout={layout} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
+        <BracketView rounds={rounds} ties={ties} topSeeds={topSeeds} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
       </section>
 
       {showAdminBanner && <HiddenResultsBanner />}

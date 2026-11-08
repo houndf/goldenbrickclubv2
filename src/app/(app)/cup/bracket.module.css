@@ -132,6 +132,28 @@
   cursor: zoom-in;
 }
 
+.viewportTall {
+  max-height: min(72vh, 760px);
+}
+
+.rotated {
+  transform: rotate(-90deg);
+}
+
+.rowHead {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 0 2px;
+  border-radius: 8px;
+  background: var(--panel-sunken);
+}
+
+.rowHead .colName {
+  font-size: 15px;
+}
+
 .canvas {
   position: absolute;
   top: 0;

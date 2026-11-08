@@ -70,6 +70,20 @@ describe("bracket layout", () => {
     expect(b.edges).toContainEqual({ from: "W-cf", to: "final" });
   });
 
+  it("turns vertical: East on top, West at the bottom, rounds as rows", () => {
+    const b = buildBracket(rounds, ties, { orientation: "vertical" });
+    const node = (k: string) => b.nodes.find((n) => n.key === k)!;
+    expect(b.orientation).toBe("vertical");
+    expect(b.height).toBeGreaterThan(b.width);
+    expect(node("E-wc").y).toBeLessThan(node("E-r1-0").y);
+    expect(node("final").y).toBeGreaterThan(node("E-cf").y);
+    expect(node("W-wc").y).toBeGreaterThan(node("W-r1-0").y);
+    // Round One runs left to right in seed order; the wild card sits over the 1-seed game
+    expect(node("E-r1-0").x).toBeLessThan(node("E-r1-1").x);
+    expect(node("E-wc").x).toBe(node("E-r1-0").x);
+    expect(node("E-r1-0").y).toBe(node("E-r1-3").y);
+  });
+
   it("places a semifinal by where its teams came from", () => {
     const withSf = [...ties, tie(3, "EAST", "NE", "MIA", 3, 2)];
     const b = buildBracket(rounds, withSf);

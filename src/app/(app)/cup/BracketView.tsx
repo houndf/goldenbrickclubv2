@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CARD_H, CARD_W, HEADER_HEIGHT, type BracketLayout, type BracketNode } from "@/lib/bracket";
-import { tieLockAt, tieState, type Side, type TieState } from "@/lib/tournament";
+import { buildBracket, type BracketNode, type Conference, type Orientation } from "@/lib/bracket";
+import { tieLockAt, tieState, type Side, type TieState, type TRound, type TTeam, type TTie } from "@/lib/tournament";
 import styles from "./bracket.module.css";
 import { saveTiePickAction } from "./actions";
 
@@ -19,21 +19,58 @@ export interface CrowdPerson {
   color: string | null;
 }
 
-const READABLE = 0.75; // below this, a tap zooms in instead of opening a matchup
+// Below this scale a tap zooms in instead of opening a matchup (vertical cards are smaller, so read sooner).
+const READABLE: Record<Orientation, number> = { horizontal: 0.75, vertical: 0.55 };
 const MAX_SCALE = 1.4;
 
+// Which way round the bracket is drawn: the viewer's last choice, else vertical on phones.
+const ORIENT_KEY = "gbc.bracket.orientation";
+const ORIENT_EVENT = "gbc-bracket-orientation";
+const WIDE = "(min-width: 760px)";
+function subscribeOrientation(cb: () => void) {
+  const mq = window.matchMedia(WIDE);
+  window.addEventListener(ORIENT_EVENT, cb);
+  window.addEventListener("storage", cb);
+  mq.addEventListener("change", cb);
+  return () => {
+    window.removeEventListener(ORIENT_EVENT, cb);
+    window.removeEventListener("storage", cb);
+    mq.removeEventListener("change", cb);
+  };
+}
+function readOrientation(): Orientation {
+  try {
+    const saved = window.localStorage.getItem(ORIENT_KEY);
+    if (saved === "horizontal" || saved === "vertical") return saved;
+  } catch {}
+  return window.matchMedia(WIDE).matches ? "horizontal" : "vertical";
+}
+function saveOrientation(o: Orientation) {
+  try {
+    window.localStorage.setItem(ORIENT_KEY, o);
+  } catch {}
+  window.dispatchEvent(new Event(ORIENT_EVENT));
+}
+
 export function BracketView({
-  layout,
+  rounds,
+  ties,
+  topSeeds,
   initialPicks,
   crowd,
   nowIso,
 }: {
-  layout: BracketLayout;
+  rounds: TRound[];
+  ties: TTie[];
+  topSeeds: Partial<Record<Conference, TTeam>>;
   initialPicks: Record<number, MyPick>;
   crowd: Record<number, { home: CrowdPerson[]; away: CrowdPerson[] }>;
   nowIso: string;
 }) {
   const router = useRouter();
+  const orientation = useSyncExternalStore(subscribeOrientation, readOrientation, () => "vertical" as const);
+  const layout = useMemo(() => buildBracket(rounds, ties, { topSeeds, orientation }), [rounds, ties, topSeeds, orientation]);
+  const { cardW, cardH } = layout;
   const viewport = useRef<HTMLDivElement>(null);
   const [now, setNow] = useState(() => new Date(nowIso));
   // Picks saved in this visit sit on top of what the server sent.
@@ -62,23 +99,29 @@ export function BracketView({
   const toPick = layout.nodes.filter((n) => n.tie && states.get(n.key) === "open" && !picks[n.tie.id]);
   const openCount = layout.nodes.filter((n) => states.get(n.key) === "open").length;
 
-  // Fit the whole bracket to the screen width.
+  // Fit the whole bracket to the screen width; start over (zoomed out, at the top) whenever it turns.
   useLayoutEffect(() => {
     const el = viewport.current;
     if (!el) return;
+    let first = true;
     const measure = () => {
       const f = Math.min(1, el.clientWidth / layout.width);
       setFit(f);
-      if (scaleRef.current < f || scaleRef.current === 0.3) {
+      if (first || scaleRef.current < f) {
         scaleRef.current = f;
         setScale(f);
       }
+      if (first) {
+        el.scrollLeft = 0;
+        el.scrollTop = 0;
+      }
+      first = false;
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [layout.width]);
+  }, [layout.width, layout.height]);
 
   /** Animate to a new scale, keeping content point (cx, cy) under viewport point (vx, vy). */
   const zoomTo = useCallback((target: number, cx: number, cy: number, vx?: number, vy?: number) => {
@@ -114,7 +157,10 @@ export function BracketView({
     return { cx: (el.scrollLeft + vx) / scaleRef.current, cy: (el.scrollTop + vy) / scaleRef.current, vx, vy };
   };
 
-  const zoomIntoNode = (n: BracketNode, s = 1) => zoomTo(s, n.x + CARD_W / 2, n.y + CARD_H / 2);
+  const readable = READABLE[orientation];
+  // Bring a card into view: zoom in only if it's too small to read, otherwise just glide over to it.
+  const zoomIntoNode = (n: BracketNode) =>
+    zoomTo(scaleRef.current >= readable ? scaleRef.current : 1, n.x + cardW / 2, n.y + cardH / 2);
 
   const onPointerDown = (e: React.PointerEvent) => {
     downAt.current = { x: e.clientX, y: e.clientY };
@@ -128,7 +174,7 @@ export function BracketView({
     if ((e.target as HTMLElement).closest("[data-node]")) return; // cards handle their own taps
     const p = contentPoint(e.clientX, e.clientY);
     const t = performance.now();
-    if (scaleRef.current < READABLE) {
+    if (scaleRef.current < readable) {
       ignoreClicksUntil.current = t + 400;
       zoomTo(1, p.cx, p.cy);
       lastTap.current = null;
@@ -136,7 +182,9 @@ export function BracketView({
     }
     const prev = lastTap.current;
     if (prev && t - prev.t < 320 && Math.hypot(e.clientX - prev.x, e.clientY - prev.y) < 30) {
-      zoomTo(fit, p.cx, p.cy, p.vx, p.vy);
+      // Double-tap: back out to the whole bracket, or in for a closer look if already there.
+      if (scaleRef.current > fit + 0.01) zoomTo(fit, p.cx, p.cy, p.vx, p.vy);
+      else zoomTo(1.15, p.cx, p.cy, p.vx, p.vy);
       lastTap.current = null;
     } else {
       lastTap.current = { t, x: e.clientX, y: e.clientY };
@@ -145,7 +193,7 @@ export function BracketView({
 
   const onCardClick = (n: BracketNode, e: React.MouseEvent) => {
     if (performance.now() < ignoreClicksUntil.current) return;
-    if (e.detail > 0 && scaleRef.current < READABLE) {
+    if (e.detail > 0 && scaleRef.current < readable) {
       ignoreClicksUntil.current = performance.now() + 400;
       zoomIntoNode(n);
       return;
@@ -172,7 +220,7 @@ export function BracketView({
   // Walk order for the ‹ › arrows: round by round, East then West, top to bottom.
   const walk = useMemo(() => {
     const sideRank = (n: BracketNode) => (n.side === "EAST" ? 0 : n.side === "WEST" ? 1 : 2);
-    return [...layout.nodes].sort((a, b) => a.round.number - b.round.number || sideRank(a) - sideRank(b) || a.y - b.y);
+    return [...layout.nodes].sort((a, b) => a.round.number - b.round.number || sideRank(a) - sideRank(b) || a.y - b.y || a.x - b.x);
   }, [layout]);
   const focusIdx = focusKey ? walk.findIndex((n) => n.key === focusKey) : -1;
   const step = (dir: 1 | -1) => {
@@ -187,7 +235,8 @@ export function BracketView({
 
   const byKey = useMemo(() => new Map(layout.nodes.map((n) => [n.key, n])), [layout]);
   const openNode = openKey ? byKey.get(openKey) ?? null : null;
-  const zoomedOut = scale < READABLE;
+  const zoomedOut = scale < readable;
+  const vertical = orientation === "vertical";
 
   return (
     <div className={styles.wrap}>
@@ -202,6 +251,18 @@ export function BracketView({
           <span className={styles.allSet}>Nothing to pick right now</span>
         )}
         <div className={styles.zoomButtons}>
+          <button
+            type="button"
+            aria-label={vertical ? "Turn the bracket sideways" : "Turn the bracket upright"}
+            title={vertical ? "Turn sideways" : "Turn upright"}
+            onClick={() => saveOrientation(vertical ? "horizontal" : "vertical")}
+          >
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className={vertical ? undefined : styles.rotated}>
+              <rect x="7" y="3" width="10" height="18" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2.4" />
+              <path d="M20.5 8.5a9 9 0 0 1 0 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+              <path d="M18.6 14.6l1.9 1.2 1.2-1.9" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
           <button type="button" aria-label="Zoom out" onClick={() => zoomStep(-1)} disabled={scale <= fit + 0.01}>
             −
           </button>
@@ -241,12 +302,14 @@ export function BracketView({
         </button>
       </div>
       <p className={styles.hint} aria-live="polite">
-        {zoomedOut ? "Double-tap the bracket to zoom in" : "Tap a glowing matchup to pick · double-tap to zoom out"}
+        {zoomedOut
+          ? "Double-tap the bracket to zoom in"
+          : `Tap a glowing matchup to pick · double-tap to zoom ${scale > fit + 0.01 ? "out" : "in"}`}
       </p>
 
       <div
         ref={viewport}
-        className={styles.viewport}
+        className={`${styles.viewport} ${vertical ? styles.viewportTall : ""}`}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         role="region"
@@ -254,36 +317,51 @@ export function BracketView({
       >
         <div style={{ width: layout.width * scale, height: layout.height * scale, position: "relative" }}>
           <div className={styles.canvas} style={{ width: layout.width, height: layout.height, transform: `scale(${scale})` }}>
-            {uniqueColumns(layout).map((c) => (
-              <div key={`${c.x}`} className={styles.colHead} style={{ left: c.x, width: CARD_W, height: HEADER_HEIGHT - 8 }}>
-                <span className={styles.colName}>{c.round.name}</span>
-                <span className={styles.colPts}>
-                  {c.side ? `${c.side} · ` : ""}+{c.round.points}
-                </span>
-              </div>
-            ))}
             <svg className={styles.lines} width={layout.width} height={layout.height} aria-hidden="true">
               {layout.edges.map((e) => {
                 const a = byKey.get(e.from)!;
                 const b = byKey.get(e.to)!;
-                const leftToRight = a.x < b.x;
-                const x1 = leftToRight ? a.x + CARD_W : a.x;
-                const x2 = leftToRight ? b.x : b.x + CARD_W;
-                const y1 = a.y + CARD_H / 2;
-                const y2 = b.y + CARD_H / 2;
-                const mx = (x1 + x2) / 2;
                 const done = a.tie?.winner != null;
+                let d: string;
+                if (vertical) {
+                  const down = a.y < b.y;
+                  const x1 = a.x + cardW / 2;
+                  const x2 = b.x + cardW / 2;
+                  const y1 = down ? a.y + cardH : a.y;
+                  const y2 = down ? b.y : b.y + cardH;
+                  const turn = down ? y1 + 10 : y1 - 10;
+                  d = `M${x1} ${y1} V${turn} H${x2} V${y2}`;
+                } else {
+                  const right = a.x < b.x;
+                  const x1 = right ? a.x + cardW : a.x;
+                  const x2 = right ? b.x : b.x + cardW;
+                  const y1 = a.y + cardH / 2;
+                  const y2 = b.y + cardH / 2;
+                  d = `M${x1} ${y1} H${(x1 + x2) / 2} V${y2} H${x2}`;
+                }
                 return (
                   <path
                     key={`${e.from}-${e.to}`}
-                    d={`M${x1} ${y1} H${mx} V${y2} H${x2}`}
+                    d={d}
                     className={done ? styles.lineDone : styles.line}
                   />
                 );
               })}
             </svg>
+            {layout.bands.map((band) => (
+              <div
+                key={`${band.x}-${band.y}`}
+                className={vertical ? styles.rowHead : styles.colHead}
+                style={vertical ? { left: band.x, top: band.y, height: band.height } : { left: band.x, top: band.y, width: band.width, height: band.height }}
+              >
+                <span className={styles.colName}>{band.round.name}</span>
+                <span className={styles.colPts}>
+                  {band.side ? `${band.side} · ` : ""}+{band.round.points}
+                </span>
+              </div>
+            ))}
             {layout.nodes.map((n) => (
-              <Card key={n.key} node={n} focused={n.key === focusKey} state={states.get(n.key)!} pick={n.tie ? picks[n.tie.id] : undefined} onClick={onCardClick} />
+              <Card key={n.key} node={n} w={cardW} h={cardH} focused={n.key === focusKey} state={states.get(n.key)!} pick={n.tie ? picks[n.tie.id] : undefined} onClick={onCardClick} />
             ))}
           </div>
         </div>
@@ -316,26 +394,25 @@ export function BracketView({
   );
 }
 
-function uniqueColumns(layout: BracketLayout) {
-  const seen = new Set<number>();
-  return layout.columns.filter((c) => (seen.has(c.x) ? false : (seen.add(c.x), true)));
-}
-
 function Card({
   node,
+  w,
+  h,
   focused,
   state,
   pick,
   onClick,
 }: {
   node: BracketNode;
+  w: number;
+  h: number;
   focused: boolean;
   state: TieState | "empty";
   pick: MyPick | undefined;
   onClick: (n: BracketNode, e: React.MouseEvent) => void;
 }) {
   const { tie } = node;
-  const style = { left: node.x, top: node.y, width: CARD_W, height: CARD_H };
+  const style = { left: node.x, top: node.y, width: w, height: h };
 
   if (!tie) {
     const a = node.placeholder?.a;
