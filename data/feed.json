@@ -1,6 +1,6 @@
 {
- "version": 1,
- "updatedAt": "2026-11-08T15:40:00-05:00",
+ "version": 2,
+ "updatedAt": "2026-11-08T15:50:00-05:00",
  "atlanta": {
   "season": 2026,
   "matches": [
@@ -351,5 +351,129 @@
   "asOf": null,
   "teams": []
  },
- "tournaments": []
+ "tournaments": [
+  {
+   "key": "mls-cup-playoffs-2026",
+   "name": "MLS Cup Playoffs 2026",
+   "trophyName": "MLS Cup Playoffs 2026 Oracle",
+   "status": "live",
+   "rounds": [
+    {
+     "number": 1,
+     "name": "Wild Card",
+     "ties": [
+      {
+       "key": "WC-E",
+       "label": "EAST",
+       "teamA": "ORL",
+       "teamB": "CIN",
+       "seedA": 8,
+       "seedB": 9,
+       "firstKickoff": "2026-11-19T19:30:00-05:00",
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "WC-W",
+       "label": "WEST",
+       "teamA": "SEA",
+       "teamB": "RSL",
+       "seedA": 8,
+       "seedB": 9,
+       "firstKickoff": "2026-11-19T22:00:00-05:00",
+       "winner": null,
+       "totalGoals": null
+      }
+     ]
+    },
+    {
+     "number": 2,
+     "name": "Round One",
+     "ties": [
+      {
+       "key": "R1-E-2v7",
+       "label": "EAST",
+       "teamA": "MIA",
+       "teamB": "CLB",
+       "seedA": 2,
+       "seedB": 7,
+       "firstKickoff": null,
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "R1-E-3v6",
+       "label": "EAST",
+       "teamA": "NE",
+       "teamB": "PHI",
+       "seedA": 3,
+       "seedB": 6,
+       "firstKickoff": null,
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "R1-E-4v5",
+       "label": "EAST",
+       "teamA": "CHI",
+       "teamB": "CLT",
+       "seedA": 4,
+       "seedB": 5,
+       "firstKickoff": null,
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "R1-W-2v7",
+       "label": "WEST",
+       "teamA": "DAL",
+       "teamB": "POR",
+       "seedA": 2,
+       "seedB": 7,
+       "firstKickoff": null,
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "R1-W-3v6",
+       "label": "WEST",
+       "teamA": "STL",
+       "teamB": "LAFC",
+       "seedA": 3,
+       "seedB": 6,
+       "firstKickoff": null,
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "R1-W-4v5",
+       "label": "WEST",
+       "teamA": "SJ",
+       "teamB": "HOU",
+       "seedA": 4,
+       "seedB": 5,
+       "firstKickoff": null,
+       "winner": null,
+       "totalGoals": null
+      }
+     ]
+    },
+    {
+     "number": 3,
+     "name": "Conference Semifinals",
+     "ties": []
+    },
+    {
+     "number": 4,
+     "name": "Conference Finals",
+     "ties": []
+    },
+    {
+     "number": 5,
+     "name": "MLS Cup",
+     "ties": []
+    }
+   ]
+  }
+ ]
 }
