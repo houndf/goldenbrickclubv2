@@ -165,29 +165,36 @@ async function main() {
       .map((t) => `(${sql(t.code)}, ${sql(t.name)}, ${sql(t.conference)})`)
       .join(",\n  ")}\non conflict (code) do nothing;`,
   );
-  for (const m of schedule) {
-    const kickoff = easternToIso(m.dateEvent, m.strTime);
+  const matchRows = schedule.map((m) => {
     const r = results.get(m.idEvent)!;
     const home = teamByName.get(m.strHomeTeam)!.code;
     const away = teamByName.get(m.strAwayTeam)!.code;
-    lines.push(
-      `insert into public.matches (id, season_id, segment_id, home_team_id, away_team_id, kickoff_at, locks_at, status, home_goals, away_goals, result_source) values (` +
-        `${sql(m.idEvent)}, 2026, (select id from public.segments where season_id = 2026 and number = ${m.segment}), ` +
-        `(select id from public.teams where code = ${sql(home)}), (select id from public.teams where code = ${sql(away)}), ` +
-        `${sql(kickoff)}, ${sql(kickoff)}::timestamptz + interval '15 minutes', 'final', ${r.home}, ${r.away}, 'admin') on conflict (id) do nothing;`,
-    );
-  }
+    const kickoff = easternToIso(m.dateEvent, m.strTime);
+    return `(${sql(m.idEvent)},${m.segment},${sql(home)},${sql(away)},${sql(kickoff)},${r.home},${r.away})`;
+  });
+  lines.push(
+    "insert into public.matches (id, season_id, segment_id, home_team_id, away_team_id, kickoff_at, locks_at, status, home_goals, away_goals, result_source)",
+    "select v.id, 2026, s.id, h.id, a.id, v.k::timestamptz, v.k::timestamptz + interval '15 minutes', 'final', v.hg, v.ag, 'admin'",
+    `from (values\n${matchRows.join(",\n")}\n) as v(id, seg, home, away, k, hg, ag)`,
+    "join public.segments s on s.season_id = 2026 and s.number = v.seg",
+    "join public.teams h on h.code = v.home",
+    "join public.teams a on a.code = v.away",
+    "on conflict (id) do nothing;",
+  );
   lines.push(
     `insert into public.legacy_players (name, extra_gold, was_admin) values ${users
       .map((u) => `(${sql(u.name)}, ${u.extraGold}, ${u.admin})`)
       .join(", ")} on conflict (name) do nothing;`,
   );
-  for (const p of picks) {
-    lines.push(
-      `insert into public.legacy_picks (match_id, legacy_player_id, pred_home, pred_away, submitted_at) values (` +
-        `${sql(p.match)}, (select id from public.legacy_players where name = ${sql(p.player)}), ${p.home}, ${p.away}, ${sql(p.at)}) on conflict do nothing;`,
-    );
-  }
+  lines.push(
+    "insert into public.legacy_picks (match_id, legacy_player_id, pred_home, pred_away, submitted_at)",
+    "select v.m, lp.id, v.h, v.a, v.t::timestamptz",
+    `from (values\n${picks
+      .map((p) => `(${sql(p.match)},${sql(p.player)},${p.home},${p.away},${sql(p.at)})`)
+      .join(",\n")}\n) as v(m, player, h, a, t)`,
+    "join public.legacy_players lp on lp.name = v.player",
+    "on conflict do nothing;",
+  );
   // One invite per 2026 player, carrying their history, Extra Gold and admin role.
   lines.push(
     "insert into public.invite_codes (note, legacy_player_id, grants_admin, grants_extra_gold)",
