@@ -328,3 +328,33 @@
 .appBody .screen {
   padding-top: 16px;
 }
+
+/* Collapsible panel (<details>): closed by default, tap the header to open. */
+.collapsibleSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.collapsibleSummary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsibleSummary > :first-child {
+  flex-grow: 1;
+}
+
+.chevron {
+  transition: transform 160ms ease;
+}
+
+.collapsible[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.collapsible:not([open]) {
+  gap: 0;
+}

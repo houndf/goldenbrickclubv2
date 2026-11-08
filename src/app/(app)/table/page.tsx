@@ -43,10 +43,14 @@ export default async function TablePage() {
         <StandingsList rows={season.standings} looks={season.looks} meId={player.id} showOffset />
       </section>
 
-      <section className={ui.panel} aria-labelledby="segments-heading">
-        <h2 id="segments-heading" className={ui.sectionTitle}>
-          Segment trophies
-        </h2>
+      <details className={`${ui.panel} ${ui.collapsible}`}>
+        <summary className={ui.collapsibleSummary}>
+          <span className={ui.sectionTitle}>Segment trophies</span>
+          <span className={ui.muted} style={{ fontSize: 13 }}>{season.segments.length} segments</span>
+          <svg className={ui.chevron} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </summary>
         <ul className={ui.list}>
           {season.segments.map((s) => (
             <li key={s.number} className={ui.row}>
@@ -72,7 +76,7 @@ export default async function TablePage() {
           ))}
         </ul>
         {!player.extraGold && <p className={ui.lead} style={{ fontSize: 13 }}>Wooden Spoon results are for Extra Gold members.</p>}
-      </section>
+      </details>
     </main>
   );
 }
