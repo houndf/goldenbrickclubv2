@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/BackButton";
 import { requirePlayer } from "@/lib/player";
 import ui from "@/components/ui.module.css";
-import { logoutAction } from "../auth-actions";
+import { logoutAction } from "@/app/auth-actions";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 
 // Reads the session/request on every visit, so it renders on the server per request.

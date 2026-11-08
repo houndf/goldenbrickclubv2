@@ -1,4 +1,4 @@
-import type { FormResult } from "@/lib/sampleData";
+import type { FormResult } from "@/lib/archive";
 import styles from "./FormChips.module.css";
 
 const labels: Record<FormResult, string> = { W: "win", D: "draw", L: "loss" };

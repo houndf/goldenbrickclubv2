@@ -31,7 +31,9 @@ export async function proxy(request: NextRequest) {
   const signedIn = Boolean(data?.claims?.sub);
   const path = request.nextUrl.pathname;
 
-  const isPrivate = path.startsWith("/home") || path.startsWith("/admin") || path.startsWith("/profile");
+  const isPrivate = ["/home", "/pick", "/table", "/friends", "/profile", "/admin"].some(
+    (p) => path === p || path.startsWith(`${p}/`),
+  );
   if (isPrivate && !signedIn) {
     const to = request.nextUrl.clone();
     to.pathname = "/login";

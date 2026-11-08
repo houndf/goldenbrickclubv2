@@ -1,0 +1,65 @@
+.card {
+  background: var(--red);
+  color: var(--cream);
+  border: var(--outline);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 7px 0 var(--ink);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform: rotate(-1deg);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.label {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--red-soft-text);
+}
+
+.meta {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--red-soft-text);
+}
+
+.record {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  background: var(--cream);
+  color: var(--ink);
+  border: var(--outline);
+  border-radius: var(--radius-sm);
+  padding: 6px 0;
+}
+
+.tileValue {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1;
+}
+
+.tileLabel {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
