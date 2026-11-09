@@ -1,347 +1,147 @@
 {
- "version": 3,
- "updatedAt": "2026-11-08T23:50:00-05:00",
+ "version": 4,
+ "updatedAt": "2026-11-09T08:45:00-05:00",
  "atlanta": {
-  "season": 2026,
+  "season": 2027,
   "matches": [
    {
-    "id": "ATL26-01",
-    "kickoff": "2026-02-21T16:45:00-05:00",
-    "home": "CIN",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-02",
-    "kickoff": "2026-02-28T19:30:00-05:00",
-    "home": "SJ",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-03",
-    "kickoff": "2026-03-07T19:30:00-05:00",
-    "home": "ATL",
-    "away": "RSL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-04",
-    "kickoff": "2026-03-14T15:00:00-04:00",
-    "home": "ATL",
-    "away": "PHI",
-    "status": "final",
-    "homeGoals": 3,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-05",
-    "kickoff": "2026-03-21T19:30:00-04:00",
-    "home": "ATL",
-    "away": "DC",
-    "status": "final",
-    "homeGoals": 0,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-06",
-    "kickoff": "2026-04-04T19:30:00-04:00",
-    "home": "ATL",
-    "away": "CLB",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-07",
-    "kickoff": "2026-04-11T20:30:00-04:00",
-    "home": "CHI",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-08",
-    "kickoff": "2026-04-18T19:30:00-04:00",
-    "home": "ATL",
-    "away": "NSH",
-    "status": "final",
-    "homeGoals": 0,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-09",
-    "kickoff": "2026-04-22T19:30:00-04:00",
-    "home": "ATL",
-    "away": "NE",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-10",
-    "kickoff": "2026-04-25T13:00:00-04:00",
-    "home": "TOR",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-11",
-    "kickoff": "2026-05-02T19:30:00-04:00",
-    "home": "ATL",
-    "away": "MTL",
-    "status": "final",
-    "homeGoals": 3,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-12",
-    "kickoff": "2026-05-09T19:30:00-04:00",
-    "home": "ATL",
-    "away": "LA",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-13",
-    "kickoff": "2026-05-16T19:30:00-04:00",
-    "home": "ORL",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-14",
-    "kickoff": "2026-05-24T17:00:00-04:00",
-    "home": "CLB",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-15",
-    "kickoff": "2026-07-17T20:00:00-04:00",
-    "home": "NSH",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-16",
-    "kickoff": "2026-07-22T20:00:00-04:00",
-    "home": "CLT",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-17",
-    "kickoff": "2026-07-25T19:30:00-04:00",
-    "home": "NE",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 4,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-18",
-    "kickoff": "2026-08-01T19:30:00-04:00",
-    "home": "PHI",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 3,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-19",
-    "kickoff": "2026-08-15T19:30:00-04:00",
-    "home": "ATL",
-    "away": "RBNY",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-20",
-    "kickoff": "2026-08-19T20:30:00-04:00",
-    "home": "MIN",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-21",
-    "kickoff": "2026-08-23T19:00:00-04:00",
-    "home": "ATL",
-    "away": "SKC",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-22",
-    "kickoff": "2026-08-29T19:30:00-04:00",
-    "home": "ATL",
-    "away": "CLT",
-    "status": "final",
-    "homeGoals": 0,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-23",
-    "kickoff": "2026-09-05T19:30:00-04:00",
-    "home": "MIA",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-24",
-    "kickoff": "2026-09-09T19:30:00-04:00",
-    "home": "ATL",
-    "away": "ORL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-25",
-    "kickoff": "2026-09-12T19:30:00-04:00",
-    "home": "DC",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 0,
-    "awayGoals": 0,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-26",
-    "kickoff": "2026-09-19T22:30:00-04:00",
-    "home": "POR",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 0,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-27",
-    "kickoff": "2026-09-26T19:30:00-04:00",
-    "home": "ATL",
-    "away": "NYC",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 2,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-28",
-    "kickoff": "2026-10-10T19:30:00-04:00",
-    "home": "ATL",
-    "away": "CIN",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-29",
-    "kickoff": "2026-10-14T19:30:00-04:00",
-    "home": "MTL",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 0,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-30",
-    "kickoff": "2026-10-17T19:30:00-04:00",
-    "home": "ATL",
-    "away": "MIA",
-    "status": "final",
-    "homeGoals": 1,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-31",
-    "kickoff": "2026-10-24T19:30:00-04:00",
-    "home": "ATL",
-    "away": "CHI",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 3,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-32",
-    "kickoff": "2026-10-28T19:30:00-04:00",
-    "home": "NYC",
-    "away": "ATL",
-    "status": "final",
-    "homeGoals": 2,
-    "awayGoals": 1,
-    "firstGoal": null
-   },
-   {
-    "id": "ATL26-33",
-    "kickoff": "2026-11-01T15:30:00-05:00",
+    "id": "ATL27-01",
+    "kickoff": "2027-02-20T19:00:00-05:00",
     "home": "ATL",
     "away": "TOR",
-    "status": "final",
-    "homeGoals": 3,
-    "awayGoals": 1,
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
     "firstGoal": null
    },
    {
-    "id": "ATL26-34",
-    "kickoff": "2026-11-07T16:00:00-05:00",
+    "id": "ATL27-02",
+    "kickoff": "2027-02-27T18:00:00-05:00",
+    "home": "ATL",
+    "away": "MIA",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-03",
+    "kickoff": "2027-03-07T14:00:00-05:00",
     "home": "RBNY",
     "away": "ATL",
-    "status": "final",
-    "homeGoals": 3,
-    "awayGoals": 0,
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-04",
+    "kickoff": "2027-03-13T20:00:00-05:00",
+    "home": "NSH",
+    "away": "ATL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-05",
+    "kickoff": "2027-03-17T19:00:00-04:00",
+    "home": "CLB",
+    "away": "ATL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-06",
+    "kickoff": "2027-03-20T19:00:00-04:00",
+    "home": "ATL",
+    "away": "CLT",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-07",
+    "kickoff": "2027-03-27T20:00:00-04:00",
+    "home": "CHI",
+    "away": "ATL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-08",
+    "kickoff": "2027-03-31T19:00:00-04:00",
+    "home": "ATL",
+    "away": "NYC",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-09",
+    "kickoff": "2027-04-03T15:00:00-04:00",
+    "home": "MTL",
+    "away": "ATL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-10",
+    "kickoff": "2027-04-10T19:00:00-04:00",
+    "home": "ATL",
+    "away": "ORL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-11",
+    "kickoff": "2027-04-17T15:00:00-04:00",
+    "home": "ATL",
+    "away": "CIN",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-12",
+    "kickoff": "2027-04-21T19:00:00-04:00",
+    "home": "NE",
+    "away": "ATL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-13",
+    "kickoff": "2027-05-01T15:00:00-04:00",
+    "home": "DC",
+    "away": "ATL",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
+    "firstGoal": null
+   },
+   {
+    "id": "ATL27-14",
+    "kickoff": "2027-05-08T17:00:00-04:00",
+    "home": "ATL",
+    "away": "PHI",
+    "status": "scheduled",
+    "homeGoals": null,
+    "awayGoals": null,
     "firstGoal": null
    }
   ]
