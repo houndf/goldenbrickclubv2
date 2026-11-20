@@ -5,7 +5,7 @@ import { timeUntil } from "@/lib/time";
 import { getLeagueSettings } from "@/lib/settings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Conference } from "@/lib/bracket";
-import { tieLockAt, tieState, tournamentStandings, type TTeam } from "@/lib/tournament";
+import { tieLockAt, tieState, tournamentStandings, type TTeam, type Unlock } from "@/lib/tournament";
 import { getLiveTournament, getOracleWins, getTournamentDetail, getTournaments } from "@/lib/tournamentData";
 import { isGoldView } from "@/lib/view";
 import ui from "@/components/ui.module.css";
@@ -32,6 +32,14 @@ export default async function CupPage() {
   const supabase = await createSupabaseServerClient();
   const { data: profiles } = await supabase.from("profiles").select("id, username, initials, avatar_color, extra_gold");
   const people = new Map((profiles ?? []).map((p) => [p.id, p]));
+
+  // Admin unlocks in force for me: league-wide, or just me (the database enforces the same rule).
+  const { data: mine } = await supabase.from("player_pick_unlocks").select("retroactive").eq("player_id", player.id).maybeSingle();
+  const unlock = {
+    on: settings.picksUnlocked || Boolean(mine),
+    retro: (settings.picksUnlocked && settings.unlockRetroactive) || Boolean(mine?.retroactive),
+    personal: Boolean(mine) && !settings.picksUnlocked,
+  };
 
   const detail = live ? await getTournamentDetail(live.id) : null;
 
@@ -70,7 +78,7 @@ export default async function CupPage() {
           goldOnly={goldOnly}
           hideResults={hideResults}
           showAdminBanner={settings.resultsHidden && isAdmin}
-          unlocked={settings.picksUnlocked}
+          unlock={unlock}
           oracles={oracles}
         />
       )}
@@ -114,7 +122,7 @@ function TournamentView({
   goldOnly,
   hideResults,
   showAdminBanner,
-  unlocked,
+  unlock,
   oracles,
 }: {
   detail: NonNullable<Awaited<ReturnType<typeof getTournamentDetail>>>;
@@ -124,7 +132,7 @@ function TournamentView({
   goldOnly: boolean;
   hideResults: boolean;
   showAdminBanner: boolean;
-  unlocked: boolean;
+  unlock: Unlock & { personal: boolean };
   oracles: Record<string, string[]>;
 }) {
   const { meta, rounds, ties, picks } = detail;
@@ -147,16 +155,16 @@ function TournamentView({
     const round = tie ? roundOf.get(tie.roundId) : undefined;
     const person = people.get(p.playerId);
     // Everyone's picks show once a matchup locks.
-    if (!tie || !round || !person || !visible.has(p.playerId) || tieState(tie, round, now, unlocked) === "open") continue;
+    if (!tie || !round || !person || !visible.has(p.playerId) || tieState(tie, round, now, unlock) === "open") continue;
     const entry = (crowd[p.tieId] ??= { home: [], away: [] });
     entry[p.pick].push({ id: person.id, username: person.username, initials: person.initials, color: person.avatar_color });
   }
 
   // Soonest lock among matchups still waiting on my pick.
   const nextLock = ties
-    .filter((t) => !myPicks[t.id] && roundOf.has(t.roundId) && tieState(t, roundOf.get(t.roundId)!, now, unlocked) === "open")
+    .filter((t) => !myPicks[t.id] && roundOf.has(t.roundId) && tieState(t, roundOf.get(t.roundId)!, now, unlock) === "open")
     .map((t) => tieLockAt(t, roundOf.get(t.roundId)!))
-    .filter((l): l is string => Boolean(l) && !unlocked)
+    .filter((l): l is string => Boolean(l) && !unlock.on)
     .sort()[0];
 
   return (
@@ -292,8 +300,11 @@ function TournamentView({
       )}
 
       <section id="bracket" className={`${ui.panel} ${ui.span} ${styles.bracketPanel}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
-        {unlocked && (
-          <p className={styles.unlockedNote}>🔓 Picks are unlocked by the admin: change any matchup that hasn&apos;t been decided.</p>
+        {unlock.on && (
+          <p className={styles.unlockedNote}>
+            🔓 {unlock.personal ? "The admin unlocked your picks" : "Picks are unlocked by the admin"}: change any matchup
+            {unlock.retro ? ", even ones already decided." : " that hasn't been decided."}
+          </p>
         )}
         <BracketView
           rounds={rounds}
@@ -302,7 +313,7 @@ function TournamentView({
           initialPicks={myPicks}
           crowd={crowd}
           nowIso={now.toISOString()}
-          unlocked={unlocked}
+          unlock={unlock}
         />
       </section>
 

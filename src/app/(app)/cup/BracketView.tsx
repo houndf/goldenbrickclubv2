@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { buildBracket, type BracketNode, type Conference, type Orientation } from "@/lib/bracket";
-import { tieLockAt, tieState, type Side, type TieState, type TRound, type TTeam, type TTie } from "@/lib/tournament";
+import { NO_UNLOCK, tieLockAt, tieState, type Side, type TieState, type TRound, type TTeam, type TTie, type Unlock } from "@/lib/tournament";
 import styles from "./bracket.module.css";
 import { saveTiePickAction } from "./actions";
 
@@ -31,7 +31,7 @@ export function BracketView({
   initialPicks,
   crowd,
   nowIso,
-  unlocked = false,
+  unlock = NO_UNLOCK,
 }: {
   rounds: TRound[];
   ties: TTie[];
@@ -39,8 +39,8 @@ export function BracketView({
   initialPicks: Record<number, MyPick>;
   crowd: Record<number, { home: CrowdPerson[]; away: CrowdPerson[] }>;
   nowIso: string;
-  /** Admin's "Unlock all picks" switch is on. */
-  unlocked?: boolean;
+  /** An admin unlock in force for this viewer. */
+  unlock?: Unlock;
 }) {
   const router = useRouter();
   // Always opens upright; the rotate button turns it sideways for this visit.
@@ -69,9 +69,9 @@ export function BracketView({
 
   const states = useMemo(() => {
     const m = new Map<string, TieState | "empty">();
-    for (const n of layout.nodes) m.set(n.key, n.tie ? tieState(n.tie, n.round, now, unlocked) : "empty");
+    for (const n of layout.nodes) m.set(n.key, n.tie ? tieState(n.tie, n.round, now, unlock) : "empty");
     return m;
-  }, [layout, now, unlocked]);
+  }, [layout, now, unlock]);
 
   const toPick = layout.nodes.filter((n) => n.tie && states.get(n.key) === "open" && !picks[n.tie.id]);
   const openCount = layout.nodes.filter((n) => states.get(n.key) === "open").length;
@@ -352,7 +352,7 @@ export function BracketView({
           node={openNode}
           state={states.get(openNode.key) as TieState}
           now={now}
-          unlocked={unlocked}
+          unlocked={unlock.on}
           mine={picks[openNode.tie.id]}
           crowd={crowd[openNode.tie.id]}
           hasNext={toPick.some((n) => n.key !== openNode.key)}

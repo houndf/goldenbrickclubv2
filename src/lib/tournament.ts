@@ -45,10 +45,18 @@ export function tieLockAt(tie: TTie, round: TRound): string | null {
 
 export type TieState = "tbd" | "open" | "locked" | "done";
 
-/** `unlocked` = the admin's "Unlock all picks" switch: anything without a result is open. */
-export function tieState(tie: TTie, round: TRound, now: Date = new Date(), unlocked = false): TieState {
-  if (tie.winner) return "done";
-  if (unlocked) return "open";
+/** An admin unlock in force for this player (league-wide or just them). */
+export interface Unlock {
+  on: boolean;
+  /** Games that already have a result can be changed too. */
+  retro: boolean;
+}
+
+export const NO_UNLOCK: Unlock = { on: false, retro: false };
+
+export function tieState(tie: TTie, round: TRound, now: Date = new Date(), unlock: Unlock = NO_UNLOCK): TieState {
+  if (tie.winner) return unlock.on && unlock.retro ? "open" : "done";
+  if (unlock.on) return "open";
   const lock = tieLockAt(tie, round);
   if (!lock) return "tbd";
   return now < new Date(lock) ? "open" : "locked";
@@ -63,10 +71,10 @@ export interface TPick {
 
 export type RoundState = "setup" | "open" | "locked" | "done";
 
-export function roundState(round: TRound, ties: TTie[], now: Date = new Date(), unlocked = false): RoundState {
+export function roundState(round: TRound, ties: TTie[], now: Date = new Date(), unlock: Unlock = NO_UNLOCK): RoundState {
   const mine = ties.filter((t) => t.roundId === round.id);
   if (mine.length > 0 && mine.every((t) => t.winner)) return "done";
-  const states = mine.map((t) => tieState(t, round, now, unlocked));
+  const states = mine.map((t) => tieState(t, round, now, unlock));
   if (states.includes("open")) return "open";
   if (states.includes("locked")) return "locked";
   return "setup";

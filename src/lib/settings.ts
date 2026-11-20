@@ -8,9 +8,11 @@ export interface LeagueSettings {
   resultsHidden: boolean;
   /** Admin override: every pick without a result can be made or changed, whatever its lock time. */
   picksUnlocked: boolean;
+  /** …and games that already have a result too. */
+  unlockRetroactive: boolean;
 }
 
-const DEFAULTS: LeagueSettings = { resultsHidden: false, picksUnlocked: false };
+const DEFAULTS: LeagueSettings = { resultsHidden: false, picksUnlocked: false, unlockRetroactive: false };
 
 /** League-wide switches. Cached, and refreshed the moment an admin changes one. */
 export async function getLeagueSettings(): Promise<LeagueSettings> {
@@ -27,5 +29,9 @@ export async function getLeagueSettings(): Promise<LeagueSettings> {
     console.error("getLeagueSettings failed", error.message);
     return DEFAULTS;
   }
-  return { resultsHidden: Boolean(data?.results_hidden), picksUnlocked: Boolean(data?.picks_unlocked) };
+  return {
+    resultsHidden: Boolean(data?.results_hidden),
+    picksUnlocked: Boolean(data?.picks_unlocked),
+    unlockRetroactive: Boolean(data?.unlock_retroactive),
+  };
 }

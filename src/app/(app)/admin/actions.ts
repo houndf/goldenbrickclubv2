@@ -95,16 +95,44 @@ export async function setExtraGoldAction(form: FormData): Promise<void> {
   revalidatePath("/", "layout");
 }
 
+const modeOf = (form: FormData) => {
+  const m = form.get("mode");
+  return m === "on" || m === "retro" ? m : "off";
+};
+
+/** League-wide unlock: off (normal locks), on (undecided games), retro (decided games too). */
 export async function setPicksUnlockedAction(form: FormData): Promise<void> {
   const admin = await requireAdmin();
-  const unlocked = form.get("unlocked") === "true";
+  const mode = modeOf(form);
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("league_settings")
-    .update({ picks_unlocked: unlocked, updated_by: admin.id, updated_at: new Date().toISOString() })
+    .update({
+      picks_unlocked: mode !== "off",
+      unlock_retroactive: mode === "retro",
+      updated_by: admin.id,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", true);
   if (error) console.error("setPicksUnlocked failed", error);
   updateTag(SETTINGS_TAG);
+  revalidatePath("/", "layout");
+}
+
+/** One player's unlock, separate from the league-wide switch. */
+export async function setPlayerUnlockAction(form: FormData): Promise<void> {
+  const admin = await requireAdmin();
+  const playerId = String(form.get("playerId") ?? "");
+  if (!playerId) return;
+  const mode = modeOf(form);
+  const supabase = await createSupabaseServerClient();
+  const { error } =
+    mode === "off"
+      ? await supabase.from("player_pick_unlocks").delete().eq("player_id", playerId)
+      : await supabase
+          .from("player_pick_unlocks")
+          .upsert({ player_id: playerId, retroactive: mode === "retro", created_by: admin.id }, { onConflict: "player_id" });
+  if (error) console.error("setPlayerUnlock failed", error);
   revalidatePath("/", "layout");
 }
 

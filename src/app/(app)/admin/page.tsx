@@ -4,7 +4,8 @@ import { requireAdmin } from "@/lib/player";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
 import { getLeagueSettings } from "@/lib/settings";
-import { revokeInviteAction, setExtraGoldAction, setPicksUnlockedAction,
+import { UnlockControl, unlockModeOf } from "./UnlockControl";
+import { revokeInviteAction, setExtraGoldAction, setPicksUnlockedAction, setPlayerUnlockAction,
   setResultsHiddenAction, setRoleAction } from "./actions";
 import { CopyButton } from "./CopyButton";
 import { CreateInviteForm } from "./CreateInviteForm";
@@ -42,6 +43,9 @@ export default async function AdminPage() {
     supabase.from("invite_codes").select("*").order("created_at", { ascending: false }),
     supabase.from("legacy_players").select("id, name, profile_id").order("name"),
   ]);
+  // Per-player unlocks (empty until the unlock migration has run).
+  const { data: unlockRows } = await supabase.from("player_pick_unlocks").select("player_id, retroactive");
+  const playerUnlock = new Map((unlockRows ?? []).map((u) => [u.player_id as string, u.retroactive as boolean]));
 
   const settings = await getLeagueSettings();
   const h = await headers();
@@ -95,31 +99,22 @@ export default async function AdminPage() {
       </section>
 
       <section className={ui.panel} aria-labelledby="unlock-switch">
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-          <div style={{ flex: "1 1 200px" }}>
-            <h2 id="unlock-switch" className={ui.sectionTitle}>
-              Unlock all picks {settings.picksUnlocked ? "🔓" : ""}
-            </h2>
-            <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
-              {settings.picksUnlocked
-                ? "Everyone can make or change any pick that doesn't have a result yet, even past its lock. Others' picks stay hidden meanwhile. Turn off to go back to normal locks."
-                : "Normal locks: each pick closes at its lock time. Turn on to let everyone make or change any pick that doesn't have a result yet."}
-            </p>
-          </div>
-          <form action={setPicksUnlockedAction}>
-            <input type="hidden" name="unlocked" value={String(!settings.picksUnlocked)} />
-            <button
-              type="submit"
-              role="switch"
-              aria-checked={settings.picksUnlocked}
-              aria-labelledby="unlock-switch"
-              className={`${ui.button} ${ui.small} ${settings.picksUnlocked ? ui.primary : ui.secondary}`}
-              style={{ minWidth: "6.875rem" }}
-            >
-              {settings.picksUnlocked ? "UNLOCKED" : "NORMAL"}
-            </button>
-          </form>
-        </div>
+        <h2 id="unlock-switch" className={ui.sectionTitle}>
+          Unlock picks {settings.picksUnlocked ? "🔓" : ""}
+        </h2>
+        <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
+          {!settings.picksUnlocked
+            ? "Normal: each pick closes at its lock time."
+            : settings.unlockRetroactive
+              ? "Everyone can make or change any pick, including games that already have a result."
+              : "Everyone can make or change any pick that doesn't have a result yet, even past its lock."}{" "}
+          Others&apos; picks stay hidden while they can change. To unlock just one person, use the buttons under Players.
+        </p>
+        <UnlockControl
+          action={setPicksUnlockedAction}
+          current={unlockModeOf(settings.picksUnlocked, settings.unlockRetroactive)}
+          label="Unlock picks for everyone"
+        />
       </section>
 
       <Link href="/admin/cup" className={`${ui.button} ${ui.primary}`} style={{ fontSize: "1.375rem" }}>
@@ -198,6 +193,11 @@ export default async function AdminPage() {
                   <span>
                     {p.role === "admin" && <span className={ui.tag}>ADMIN</span>}
                     {p.extra_gold && <span className={ui.tag}>EXTRA GOLD</span>}
+                    {playerUnlock.has(p.id) && (
+                      <span className={ui.tag} style={{ background: "var(--teal)" }}>
+                        {playerUnlock.get(p.id) ? "UNLOCKED + PAST" : "UNLOCKED"}
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className={ui.rowActions}>
@@ -217,6 +217,17 @@ export default async function AdminPage() {
                       </button>
                     </form>
                   )}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", flexBasis: "100%" }}>
+                  <span className={ui.muted} style={{ fontSize: "0.75rem", fontWeight: 900 }}>
+                    PICKS
+                  </span>
+                  <UnlockControl
+                    action={setPlayerUnlockAction}
+                    current={unlockModeOf(playerUnlock.has(p.id), playerUnlock.get(p.id) ?? false)}
+                    label={`Unlock picks for ${p.username}`}
+                    fields={{ playerId: p.id }}
+                  />
                 </div>
                 <ResetPasswordButton playerId={p.id} username={p.username} />
               </li>

@@ -69,9 +69,11 @@ describe("matchup locks", () => {
     const tie = { ...ties[0], winner: null, kickoff: "2026-11-22T20:00:00Z" };
     const late = new Date("2026-11-22T21:00:00Z");
     expect(tieState(tie, rounds[0], late)).toBe("locked");
-    expect(tieState(tie, rounds[0], late, true)).toBe("open");
-    expect(tieState({ ...tie, kickoff: null }, { ...rounds[0], locksAt: null }, late, true)).toBe("open");
-    expect(tieState(ties[0], rounds[0], late, true)).toBe("done"); // decided stays decided
+    const on = { on: true, retro: false };
+    expect(tieState(tie, rounds[0], late, on)).toBe("open");
+    expect(tieState({ ...tie, kickoff: null }, { ...rounds[0], locksAt: null }, late, on)).toBe("open");
+    expect(tieState(ties[0], rounds[0], late, on)).toBe("done"); // decided stays decided…
+    expect(tieState(ties[0], rounds[0], late, { on: true, retro: true })).toBe("open"); // …unless retroactive
   });
   it("is TBD with no kickoff and no round time", () => {
     expect(tieState({ ...ties[0], winner: null }, { ...rounds[0], locksAt: null })).toBe("tbd");
