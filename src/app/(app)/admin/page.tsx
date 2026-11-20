@@ -4,7 +4,8 @@ import { requireAdmin } from "@/lib/player";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ui from "@/components/ui.module.css";
 import { getLeagueSettings } from "@/lib/settings";
-import { revokeInviteAction, setExtraGoldAction, setResultsHiddenAction, setRoleAction } from "./actions";
+import { revokeInviteAction, setExtraGoldAction, setPicksUnlockedAction,
+  setResultsHiddenAction, setRoleAction } from "./actions";
 import { CopyButton } from "./CopyButton";
 import { CreateInviteForm } from "./CreateInviteForm";
 import { ResetPasswordButton } from "./ResetPasswordButton";
@@ -88,6 +89,34 @@ export default async function AdminPage() {
               style={{ minWidth: "6.875rem" }}
             >
               {settings.resultsHidden ? "HIDDEN" : "SHOWING"}
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section className={ui.panel} aria-labelledby="unlock-switch">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          <div style={{ flex: "1 1 200px" }}>
+            <h2 id="unlock-switch" className={ui.sectionTitle}>
+              Unlock all picks {settings.picksUnlocked ? "🔓" : ""}
+            </h2>
+            <p className={ui.lead} style={{ fontSize: "0.8125rem" }}>
+              {settings.picksUnlocked
+                ? "Everyone can make or change any pick that doesn't have a result yet, even past its lock. Others' picks stay hidden meanwhile. Turn off to go back to normal locks."
+                : "Normal locks: each pick closes at its lock time. Turn on to let everyone make or change any pick that doesn't have a result yet."}
+            </p>
+          </div>
+          <form action={setPicksUnlockedAction}>
+            <input type="hidden" name="unlocked" value={String(!settings.picksUnlocked)} />
+            <button
+              type="submit"
+              role="switch"
+              aria-checked={settings.picksUnlocked}
+              aria-labelledby="unlock-switch"
+              className={`${ui.button} ${ui.small} ${settings.picksUnlocked ? ui.primary : ui.secondary}`}
+              style={{ minWidth: "6.875rem" }}
+            >
+              {settings.picksUnlocked ? "UNLOCKED" : "NORMAL"}
             </button>
           </form>
         </div>

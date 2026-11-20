@@ -45,8 +45,10 @@ export function tieLockAt(tie: TTie, round: TRound): string | null {
 
 export type TieState = "tbd" | "open" | "locked" | "done";
 
-export function tieState(tie: TTie, round: TRound, now: Date = new Date()): TieState {
+/** `unlocked` = the admin's "Unlock all picks" switch: anything without a result is open. */
+export function tieState(tie: TTie, round: TRound, now: Date = new Date(), unlocked = false): TieState {
   if (tie.winner) return "done";
+  if (unlocked) return "open";
   const lock = tieLockAt(tie, round);
   if (!lock) return "tbd";
   return now < new Date(lock) ? "open" : "locked";
@@ -61,10 +63,10 @@ export interface TPick {
 
 export type RoundState = "setup" | "open" | "locked" | "done";
 
-export function roundState(round: TRound, ties: TTie[], now: Date = new Date()): RoundState {
+export function roundState(round: TRound, ties: TTie[], now: Date = new Date(), unlocked = false): RoundState {
   const mine = ties.filter((t) => t.roundId === round.id);
   if (mine.length > 0 && mine.every((t) => t.winner)) return "done";
-  const states = mine.map((t) => tieState(t, round, now));
+  const states = mine.map((t) => tieState(t, round, now, unlocked));
   if (states.includes("open")) return "open";
   if (states.includes("locked")) return "locked";
   return "setup";

@@ -65,6 +65,14 @@ describe("matchup locks", () => {
     expect(tieState(tie, rounds[0], new Date("2026-11-22T18:59:00Z"))).toBe("open");
     expect(tieState(tie, rounds[0], new Date("2026-11-22T19:01:00Z"))).toBe("locked");
   });
+  it("opens everything without a result while the admin has picks unlocked", () => {
+    const tie = { ...ties[0], winner: null, kickoff: "2026-11-22T20:00:00Z" };
+    const late = new Date("2026-11-22T21:00:00Z");
+    expect(tieState(tie, rounds[0], late)).toBe("locked");
+    expect(tieState(tie, rounds[0], late, true)).toBe("open");
+    expect(tieState({ ...tie, kickoff: null }, { ...rounds[0], locksAt: null }, late, true)).toBe("open");
+    expect(tieState(ties[0], rounds[0], late, true)).toBe("done"); // decided stays decided
+  });
   it("is TBD with no kickoff and no round time", () => {
     expect(tieState({ ...ties[0], winner: null }, { ...rounds[0], locksAt: null })).toBe("tbd");
   });

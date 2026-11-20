@@ -95,6 +95,19 @@ export async function setExtraGoldAction(form: FormData): Promise<void> {
   revalidatePath("/", "layout");
 }
 
+export async function setPicksUnlockedAction(form: FormData): Promise<void> {
+  const admin = await requireAdmin();
+  const unlocked = form.get("unlocked") === "true";
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("league_settings")
+    .update({ picks_unlocked: unlocked, updated_by: admin.id, updated_at: new Date().toISOString() })
+    .eq("id", true);
+  if (error) console.error("setPicksUnlocked failed", error);
+  updateTag(SETTINGS_TAG);
+  revalidatePath("/", "layout");
+}
+
 export async function setResultsHiddenAction(form: FormData): Promise<void> {
   const admin = await requireAdmin();
   const hidden = form.get("hidden") === "true";

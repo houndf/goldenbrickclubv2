@@ -70,6 +70,7 @@ export default async function CupPage() {
           goldOnly={goldOnly}
           hideResults={hideResults}
           showAdminBanner={settings.resultsHidden && isAdmin}
+          unlocked={settings.picksUnlocked}
           oracles={oracles}
         />
       )}
@@ -113,6 +114,7 @@ function TournamentView({
   goldOnly,
   hideResults,
   showAdminBanner,
+  unlocked,
   oracles,
 }: {
   detail: NonNullable<Awaited<ReturnType<typeof getTournamentDetail>>>;
@@ -122,6 +124,7 @@ function TournamentView({
   goldOnly: boolean;
   hideResults: boolean;
   showAdminBanner: boolean;
+  unlocked: boolean;
   oracles: Record<string, string[]>;
 }) {
   const { meta, rounds, ties, picks } = detail;
@@ -144,15 +147,16 @@ function TournamentView({
     const round = tie ? roundOf.get(tie.roundId) : undefined;
     const person = people.get(p.playerId);
     // Everyone's picks show once a matchup locks.
-    if (!tie || !round || !person || !visible.has(p.playerId) || tieState(tie, round, now) === "open") continue;
+    if (!tie || !round || !person || !visible.has(p.playerId) || tieState(tie, round, now, unlocked) === "open") continue;
     const entry = (crowd[p.tieId] ??= { home: [], away: [] });
     entry[p.pick].push({ id: person.id, username: person.username, initials: person.initials, color: person.avatar_color });
   }
 
   // Soonest lock among matchups still waiting on my pick.
   const nextLock = ties
-    .filter((t) => !myPicks[t.id] && roundOf.has(t.roundId) && tieState(t, roundOf.get(t.roundId)!, now) === "open")
-    .map((t) => tieLockAt(t, roundOf.get(t.roundId)!)!)
+    .filter((t) => !myPicks[t.id] && roundOf.has(t.roundId) && tieState(t, roundOf.get(t.roundId)!, now, unlocked) === "open")
+    .map((t) => tieLockAt(t, roundOf.get(t.roundId)!))
+    .filter((l): l is string => Boolean(l) && !unlocked)
     .sort()[0];
 
   return (
@@ -288,7 +292,18 @@ function TournamentView({
       )}
 
       <section id="bracket" className={`${ui.panel} ${ui.span} ${styles.bracketPanel}`} aria-label="Bracket" style={{ padding: "0.75rem" }}>
-        <BracketView rounds={rounds} ties={ties} topSeeds={topSeeds} initialPicks={myPicks} crowd={crowd} nowIso={now.toISOString()} />
+        {unlocked && (
+          <p className={styles.unlockedNote}>🔓 Picks are unlocked by the admin: change any matchup that hasn&apos;t been decided.</p>
+        )}
+        <BracketView
+          rounds={rounds}
+          ties={ties}
+          topSeeds={topSeeds}
+          initialPicks={myPicks}
+          crowd={crowd}
+          nowIso={now.toISOString()}
+          unlocked={unlocked}
+        />
       </section>
 
     </>

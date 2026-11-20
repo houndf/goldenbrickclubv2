@@ -410,3 +410,12 @@
 .bracketPanel {
   scroll-margin-top: 0.75rem;
 }
+
+.unlockedNote {
+  margin: 0 0 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px dashed var(--teal);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
