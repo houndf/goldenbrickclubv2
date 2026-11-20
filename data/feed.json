@@ -1,6 +1,6 @@
 {
- "version": 4,
- "updatedAt": "2026-11-09T08:45:00-05:00",
+ "version": 5,
+ "updatedAt": "2026-11-20T08:40:00-05:00",
  "atlanta": {
   "season": 2027,
   "matches": [
@@ -561,7 +561,7 @@
        "seedA": 8,
        "seedB": 9,
        "firstKickoff": "2026-11-19T19:30:00-05:00",
-       "winner": null,
+       "winner": "b",
        "totalGoals": null
       },
       {
@@ -572,7 +572,7 @@
        "seedA": 8,
        "seedB": 9,
        "firstKickoff": "2026-11-19T22:00:00-05:00",
-       "winner": null,
+       "winner": "b",
        "totalGoals": null
       }
      ]
@@ -581,6 +581,17 @@
      "number": 2,
      "name": "Round One",
      "ties": [
+      {
+       "key": "R1-E-1v8",
+       "label": "EAST",
+       "teamA": "NSH",
+       "teamB": "CIN",
+       "seedA": 1,
+       "seedB": 9,
+       "firstKickoff": "2026-11-22T16:00:00-05:00",
+       "winner": null,
+       "totalGoals": null
+      },
       {
        "key": "R1-E-2v7",
        "label": "EAST",
@@ -611,6 +622,17 @@
        "seedA": 4,
        "seedB": 5,
        "firstKickoff": "2026-11-22T18:30:00-05:00",
+       "winner": null,
+       "totalGoals": null
+      },
+      {
+       "key": "R1-W-1v8",
+       "label": "WEST",
+       "teamA": "VAN",
+       "teamB": "RSL",
+       "seedA": 1,
+       "seedB": 9,
+       "firstKickoff": "2026-11-22T20:30:00-05:00",
        "winner": null,
        "totalGoals": null
       },
