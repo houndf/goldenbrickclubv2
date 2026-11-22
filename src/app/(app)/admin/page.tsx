@@ -120,6 +120,9 @@ export default async function AdminPage() {
       <Link href="/admin/cup" className={`${ui.button} ${ui.primary}`} style={{ fontSize: "1.375rem" }}>
         TOURNAMENTS (CUPS) ›
       </Link>
+      <Link href="/admin/data" className={`${ui.button} ${ui.primary}`} style={{ fontSize: "1.375rem" }}>
+        DATA: SCORES &amp; PICKS ›
+      </Link>
 
       <section className={ui.panel} aria-labelledby="new-invite">
         <h2 id="new-invite" className={ui.sectionTitle}>
