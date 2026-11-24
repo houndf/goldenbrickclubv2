@@ -21,15 +21,17 @@ export default async function AdminDataPage({ searchParams }: PageProps<"/admin/
   const params = await searchParams;
   const db = createSupabaseAdminClient();
 
-  const [{ data: seasons }, { data: tournaments }] = await Promise.all([
+  const [{ data: seasons }, { data: tournaments }, { data: players }] = await Promise.all([
     db.from("seasons").select("id, scoring").order("id", { ascending: false }),
     db.from("tournaments").select("id, name, status").order("created_at", { ascending: false }),
+    db.from("profiles").select("id, username, initials, avatar_color").order("username"),
   ]);
   const seasonList = seasons ?? [];
   const tList = tournaments ?? [];
 
-  // Default: the season of the most recent finished match, else the newest season.
+  // Default: the Cup while one is live, else the season of the most recent finished match.
   let view = typeof params.view === "string" ? params.view : "";
+  if (!view && tList.some((x) => x.status === "live")) view = "cup";
   if (!view) {
     const { data: last } = await db
       .from("matches")
@@ -52,6 +54,28 @@ export default async function AdminDataPage({ searchParams }: PageProps<"/admin/
         overwritten by the automatic results feed.
       </p>
 
+      <section className={`${ui.panel} ${ui.span}`} aria-labelledby="for-player">
+        <h2 id="for-player" className={ui.sectionTitle}>
+          Enter a pick for someone
+        </h2>
+        <p className={ui.muted} style={{ fontSize: "0.8125rem", margin: 0 }}>
+          Tap the player, then tap their team on each matchup.
+        </p>
+        <div className={styles.playerChips}>
+          {(players ?? []).map((p) => (
+            <Link key={p.id} href={`/admin/data/player/${p.id}`} className={styles.playerChip}>
+              <span className={styles.chipDot} style={{ background: p.avatar_color }} aria-hidden="true">
+                {p.initials}
+              </span>
+              {p.username}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <h2 className={`${ui.sectionTitle} ${ui.span}`} style={{ marginTop: "0.5rem" }}>
+        Fix a result or look at one game
+      </h2>
       <nav className={`${styles.tabs} ${ui.span}`} aria-label="What to edit">
         {seasonList.map((s) => (
           <Link

@@ -32,7 +32,8 @@ function refresh() {
 
 function back(path: string, saved: string): never {
   refresh();
-  redirect(`${path}?saved=${encodeURIComponent(saved)}`);
+  // Land back on the row that was just saved.
+  redirect(`${path}?saved=${encodeURIComponent(saved)}#row-${encodeURIComponent(saved)}`);
 }
 
 function fail(path: string, message: string): never {
@@ -160,13 +161,15 @@ export async function saveTiePickAdminAction(form: FormData): Promise<void> {
   await requireAdmin();
   const tieId = Number(str(form, "tieId"));
   const playerId = str(form, "playerId");
-  const path = `/admin/data/tie/${tieId}`;
+  // Return to where the admin came from (the matchup page or a player's page).
+  const backTo = str(form, "back");
+  const path = backTo.startsWith("/admin/data/") ? backTo : `/admin/data/tie/${tieId}`;
   const db = createSupabaseAdminClient();
   const pick = str(form, "pick");
   if (form.get("clear") || pick === "") {
     const { error } = await db.from("tournament_picks").delete().eq("tie_id", tieId).eq("player_id", playerId);
     if (error) fail(path, error.message);
-    back(path, `p${playerId}`);
+    back(path, path.startsWith("/admin/data/player/") ? `t${tieId}` : `p${playerId}`);
   }
   if (pick !== "home" && pick !== "away") fail(path, "Pick a team.");
   const total = goals(form, "totalGoals");
@@ -178,5 +181,5 @@ export async function saveTiePickAdminAction(form: FormData): Promise<void> {
       { onConflict: "tie_id,player_id" },
     );
   if (error) fail(path, error.message);
-  back(path, `p${playerId}`);
+  back(path, path.startsWith("/admin/data/player/") ? `t${tieId}` : `p${playerId}`);
 }

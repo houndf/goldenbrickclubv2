@@ -154,7 +154,7 @@ async function LegacyPicks({
           const pts = p && final ? legacyPoints(p.pred_home, p.pred_away, final.h, final.a) : null;
           return (
             <li key={pl.id}>
-              <form action={saveLegacyPickAction} className={`${styles.editRow} ${saved === `l${pl.id}` ? styles.editRowSaved : ""}`}>
+              <form id={`row-l${pl.id}`} action={saveLegacyPickAction} className={`${styles.editRow} ${saved === `l${pl.id}` ? styles.editRowSaved : ""}`}>
                 <input type="hidden" name="matchId" value={matchId} />
                 <input type="hidden" name="legacyPlayerId" value={pl.id} />
                 <span className={styles.who}>
@@ -229,7 +229,7 @@ async function SeasonPicks({
           }
           return (
             <li key={pl.id}>
-              <form action={saveSeasonPickAction} className={`${styles.editRow} ${saved === `p${pl.id}` ? styles.editRowSaved : ""}`}>
+              <form id={`row-p${pl.id}`} action={saveSeasonPickAction} className={`${styles.editRow} ${saved === `p${pl.id}` ? styles.editRowSaved : ""}`}>
                 <input type="hidden" name="matchId" value={matchId} />
                 <input type="hidden" name="playerId" value={pl.id} />
                 <span className={styles.who}>

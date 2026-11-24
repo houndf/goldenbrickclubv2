@@ -101,7 +101,7 @@ export default async function AdminTiePage({ params, searchParams }: PageProps<"
           Predictions
         </h2>
         <p className={ui.muted} style={{ fontSize: "0.8125rem", margin: 0 }}>
-          Choose a team and SAVE; set it to — or press CLEAR to remove a pick.
+          Tap a team to save that player&apos;s pick; CLEAR removes it.
         </p>
         <ul className={ui.list}>
           {(players ?? []).map((pl) => {
@@ -109,18 +109,28 @@ export default async function AdminTiePage({ params, searchParams }: PageProps<"
             const pts = p && tie.winner ? (p.pick === tie.winner ? round.points : 0) : null;
             return (
               <li key={pl.id}>
-                <form action={saveTiePickAdminAction} className={`${styles.editRow} ${saved === `p${pl.id}` ? styles.editRowSaved : ""}`}>
+                <form id={`row-p${pl.id}`} action={saveTiePickAdminAction} className={`${styles.editRow} ${saved === `p${pl.id}` ? styles.editRowSaved : ""}`}>
                   <input type="hidden" name="tieId" value={tie.id} />
                   <input type="hidden" name="playerId" value={pl.id} />
                   <span className={styles.who}>
                     {pl.username}
                     <small>{saved === `p${pl.id}` ? "✓ saved" : p ? "" : "no pick"}</small>
                   </span>
-                  <select name="pick" className={`${ui.select} ${styles.sel}`} defaultValue={p?.pick ?? ""} aria-label={`${pl.username}: who goes through`}>
-                    <option value="">—</option>
-                    <option value="home">{a?.code}</option>
-                    <option value="away">{b?.code}</option>
-                  </select>
+                  <span role="group" aria-label={`${pl.username}: who goes through`} style={{ display: "flex", gap: "0.375rem" }}>
+                    {(["home", "away"] as const).map((side) => (
+                      <button
+                        key={side}
+                        type="submit"
+                        name="pick"
+                        value={side}
+                        aria-pressed={p?.pick === side}
+                        className={`${ui.button} ${ui.small} ${p?.pick === side ? ui.primary : ui.secondary}`}
+                      >
+                        {side === "home" ? a?.code : b?.code}
+                        {p?.pick === side ? " ✓" : ""}
+                      </button>
+                    ))}
+                  </span>
                   {round.is_final && (
                     <input
                       name="totalGoals"
@@ -136,9 +146,6 @@ export default async function AdminTiePage({ params, searchParams }: PageProps<"
                   <span className={styles.pts} title="Points for this matchup">
                     {pts == null ? "" : pts > 0 ? `+${pts}` : "0"}
                   </span>
-                  <button type="submit" className={`${ui.button} ${ui.small} ${ui.primary}`}>
-                    SAVE
-                  </button>
                   {p && (
                     <button type="submit" name="clear" value="1" className={`${ui.button} ${ui.small} ${ui.secondary}`}>
                       CLEAR
